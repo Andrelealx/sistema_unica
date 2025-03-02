@@ -1,0 +1,293 @@
+/* ===============================
+   CONFIGURAÇÕES GERAIS
+   =============================== */
+body {
+  background-color: #001f3f; /* Fundo azul escuro */
+  color: #f8f9fa;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  padding-bottom: 20px;
+}
+
+/* ===============================
+   NAVBAR
+   =============================== */
+.navbar {
+  background-color: #001237 !important;
+  border-bottom: 2px solid #0056b3;
+  padding: 0.75rem 1rem;
+}
+
+.navbar-brand,
+.navbar-nav .nav-link {
+  color: #f8f9fa !important;
+  font-weight: 500;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #cce5ff !important;
+}
+
+/* ===============================
+   TÍTULOS
+   =============================== */
+h2 {
+  color: #f8f9fa;
+  font-weight: 600;
+  margin-bottom: 20px;
+  font-size: 1.75rem;
+}
+
+/* ===============================
+   TABELA
+   =============================== */
+.table {
+  background-color: #00274d;  /* Fundo da tabela */
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.table thead th {
+  background-color: #0056b3;
+  color: #f8f9fa;
+  padding: 10px;
+  text-align: center;
+}
+
+.table tbody td {
+  padding: 10px;
+  vertical-align: middle;
+  font-size: 0.95rem;
+  color: #f8f9fa;
+  text-align: center;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: #003d73;
+}
+
+.table-bordered {
+  border: 1px solid #0056b3;
+}
+
+/* ===============================
+   BOTÕES
+   =============================== */
+.btn-info {
+  background-color: #17a2b8;
+  border: none;
+  color: #fff;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+.btn-info:hover {
+  background-color: #138496;
+  transform: scale(1.02);
+}
+
+.btn-success {
+  background-color: #28a745;
+  border: none;
+  color: #fff;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+.btn-success:hover {
+  background-color: #218838;
+  transform: scale(1.02);
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  border: none;
+  color: #fff;
+  transition: background-color 0.3s ease;
+}
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+/* ===============================
+   ALERTS
+   =============================== */
+.alert {
+  border-radius: 4px;
+  background-color: #0056b3;
+  color: #f8f9fa;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: none;
+}
+
+/* ===============================
+   RESPONSIVIDADE
+   =============================== */
+@media (max-width: 768px) {
+  .navbar-brand {
+    font-size: 1.2rem;
+  }
+  h2 {
+    font-size: 1.5rem;
+  }
+}
+
+/* ===============================
+   ÁREA DE COMENTÁRIOS (DENTRO DO MODAL)
+   =============================== */
+.comentarios-section {
+  background-color: #ffffff;  /* Fundo branco para contraste */
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 16px;
+  margin-top: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.comentarios-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.comentarios-list {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+  padding-right: 8px;
+}
+
+.comentario {
+  border-bottom: 1px solid #eee;
+  padding: 10px 0;
+}
+.comentario:last-child {
+  border-bottom: none;
+}
+
+.comentario-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.comentario-author {
+  font-weight: bold;
+  font-size: 0.95rem;
+  color: #000;  /* Texto preto */
+}
+
+.comentario-date {
+  font-size: 0.85rem;
+  color: #666;
+  font-style: italic;
+}
+
+.comentario-body {
+  font-size: 0.95rem;
+  color: #000;  /* Texto preto */
+  line-height: 1.5;
+}
+
+.comentarios-empty {
+  text-align: center;
+  font-size: 0.95rem;
+  color: #666;
+  padding: 12px 0;
+}
+
+/* Formulário de Comentário */
+.comentario-form h6 {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.comentario-form textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 8px;
+  font-size: 0.95rem;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+  margin-bottom: 10px;
+}
+
+.comentario-form button {
+  display: block;
+  margin-left: auto;
+}
+
+/* ===============================
+   SEARCH BAR (FILTROS E BUSCA)
+   =============================== */
+.search-bar {
+  background-color: #001237;  /* Mesma cor do cabeçalho */
+  padding: 20px;
+  margin-bottom: 25px;
+  border-radius: 8px;
+}
+
+.search-bar form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.search-bar .form-group {
+  margin-right: 15px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.search-bar .form-group label {
+  color: #f8f9fa;
+  font-size: 0.9rem;
+  margin-right: 5px;
+  white-space: nowrap;
+}
+
+.search-bar input.form-control,
+.search-bar select.form-control {
+  min-width: 150px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px;
+}
+
+.search-bar input.form-control:focus,
+.search-bar select.form-control:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0,86,179,0.5);
+}
+
+.search-bar button,
+.search-bar a.btn {
+  margin-top: 5px;
+}
+
+/* ===============================
+   MODAL DE DETALHES (SOMENTE PARA DETALHES DO CHAMADO)
+   =============================== */
+.modal.fade[id^="detalhesModal"] .modal-content {
+  background-color: #ffffff !important; /* Fundo branco */
+  color: #000000 !important;            /* Texto preto */
+}
+
+.modal.fade[id^="detalhesModal"] .modal-header,
+.modal.fade[id^="detalhesModal"] .modal-footer {
+  background-color: #f2f2f2 !important; /* Cinza claro para header/footer */
+  border: none;
+  color: #000000 !important;
+}
+
+.modal.fade[id^="detalhesModal"] .close {
+  color: #000000 !important; /* Ícone de fechar em preto */
+}
+
+.modal.fade[id^="detalhesModal"] .modal-body {
+  color: #000000 !important;
+}

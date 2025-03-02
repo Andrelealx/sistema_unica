@@ -1,0 +1,20 @@
+{
+  "name": "Unica Serviços - Sistema de Chamados",
+  "short_name": "UnicaChamados",
+  "start_url": "/index.php",
+  "display": "standalone",
+  "background_color": "#001f3f",
+  "theme_color": "#001237",
+  "icons": [
+    {
+      "src": "assets/img/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/img/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
