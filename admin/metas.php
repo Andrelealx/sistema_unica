@@ -94,6 +94,9 @@ $message = "Prepare-se para o desafio!";
     <button type="button" class="btn-admin" data-toggle="modal" data-target="#adminModal">
       <i class="fas fa-cogs"></i>
     </button>
+    <button class="btn btn-sm btn-outline-secondary" onclick="location.href='chamados.php';">
+  <i class="fas fa-arrow-left"></i> Voltar
+</button>
   </div>
   <?php endif; ?>
 
