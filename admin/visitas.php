@@ -110,7 +110,7 @@ $pendingInstituicoes = $totalInstituicoes - $visitedInstituicoes;
       <div class="col-md-6 mb-3">
         <div class="card">
           <div class="card-body">
-            <h5 class="card-title">Instituições</h5>
+            <h5 class="card-title">Escolas e Creches</h5>
             <p class="card-text">
               Total: <?php echo $totalInstituicoes; ?><br>
               Visitadas: <?php echo $visitedInstituicoes; ?><br>
