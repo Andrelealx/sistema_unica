@@ -85,6 +85,7 @@ $message = "Prepare-se para o desafio!";
 <body>
   <!-- Logo com fundo azul capri (nesse caso, usamos o fundo navy-escuro do contêiner) -->
   <div class="logo-container">
+  <a href="../admin/painel.php">
     <img src="../assets/img/logo.png" alt="Logo da Empresa">
   </div>
 
