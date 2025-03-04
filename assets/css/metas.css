@@ -1,191 +1,207 @@
 .logo-container {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    background-color: #2C3E50;
-    padding: 5px 8px;
-    border-radius: 5px;
-    z-index: 1000;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: #2C3E50;
+  padding: 5px 8px;
+  border-radius: 5px;
+  z-index: 1000;
+}
+
+.logo-container img {
+  max-height: 80px;
+  display: block;
+}
+
+/* Fundo sólido navy */
+body {
+  background-color: #1B263B;
+  color: #fff;
+  font-family: 'Press Start 2P', cursive;
+  padding: 20px;
+  margin: 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 120px auto 0 auto;
+  position: relative;
+}
+
+h1, h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Cartões */
+.card {
+  background-color: #212F45;
+  border: 2px solid #F39C12;
+  border-radius: 10px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+}
+
+.card-header {
+  background-color: #F39C12;
+  color: #1B263B;
+  padding: 15px;
+  font-size: 1.2rem;
+  text-align: center;
+  font-weight: bold;
+  border-bottom: 2px solid #1B263B;
+}
+
+.card-body {
+  padding: 20px;
+  text-align: center;
+}
+
+/* Barra de Progresso */
+.progress {
+  height: 40px;
+  background-color: #495164;
+  border-radius: 20px;
+  overflow: visible;
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.progress-bar {
+  background-color: #00BFFF; /* Azul Capri */
+  transition: width 1s ease-in-out;
+  height: 100%;
+}
+
+/* Caju PNG que acompanha a barra */
+.caju-run {
+  position: absolute;
+  top: -40px;
+  width: 80px;
+  z-index: 10;
+  transition: left 1s ease-in-out;
+}
+
+/* Tabela de Pontuação */
+.table-responsive {
+  margin-top: 20px;
+}
+
+.table-dark th, .table-dark td {
+  background-color: #2C3E50;
+  border: 1px solid #F39C12;
+  color: #fff;
+}
+
+/* Botões para Uso de Peça */
+.btn-stock {
+  background-color: #F39C12;
+  border: none;
+  color: #1B263B;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 5px;
+  text-decoration: none;
+}
+.btn-stock:hover {
+  transform: scale(1.05);
+}
+
+/* Botão Administrativo (apenas para superadmin) */
+.admin-actions {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1100;
+}
+
+.btn-admin {
+  background-color: #00BFFF;
+  border: none;
+  color: #1B263B;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 5px;
+  text-decoration: none;
+}
+.btn-admin:hover {
+  transform: scale(1.05);
+}
+
+/* Overlay e Mensagem "CAJU AMADURECEU" */
+.caju-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  flex-direction: column;
+}
+.caju-message {
+  color: #F39C12;
+  font-size: 3rem;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 20px;
+  border: 4px dashed #F39C12;
+  margin-bottom: 20px;
+  animation: blink 1s infinite alternate;
+}
+@keyframes blink {
+  from { opacity: 1; }
+  to   { opacity: 0.5; }
+}
+.btn-close-caju {
+  background-color: #F39C12;
+  color: #1B263B;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.btn-close-caju:hover {
+  transform: scale(1.05);
+}
+
+/* Responsividade para telas até 576px (celulares) */
+@media (max-width: 576px) {
+  .logo-container {
+    position: static;
+    display: block;
+    margin: 0 auto 10px auto;
   }
   .logo-container img {
-    max-height: 80px;
-    display: block;
-  }
-  /* Fundo sólido navy */
-  body {
-    background-color: #1B263B;
-    color: #fff;
-    font-family: 'Press Start 2P', cursive;
-    padding: 20px;
-    margin: 0;
+    max-height: 60px;
   }
   .container {
-    max-width: 1200px;
-    margin: 120px auto 0 auto;
-    position: relative;
-  }
-  h1, h2 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  /* Cartões */
-  .card {
-    background-color: #212F45;
-    border: 2px solid #F39C12;
-    border-radius: 10px;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
-  }
-  .card-header {
-    background-color: #F39C12;
-    color: #1B263B;
-    padding: 15px;
-    font-size: 1.2rem;
-    text-align: center;
-    font-weight: bold;
-    border-bottom: 2px solid #1B263B;
-  }
-  .card-body {
-    padding: 20px;
-    text-align: center;
-  }
-  /* Barra de Progresso */
-  .progress {
-    height: 40px;
-    background-color: #495164;
-    border-radius: 20px;
-    overflow: visible;
-    margin-bottom: 15px;
-    position: relative;
-  }
-  .progress-bar {
-    background-color: #00BFFF; /* Azul Capri */
-    transition: width 1s ease-in-out;
-    height: 100%;
-  }
-  /* Caju PNG que acompanha a barra */
-  .caju-run {
-    position: absolute;
-    top: -40px;
-    width: 80px;
-    z-index: 10;
-    transition: left 1s ease-in-out;
-  }
-  /* Removemos o efeito de animação da barra */
-  /* Tabela de Pontuação */
-  .table-responsive {
     margin-top: 20px;
   }
-  .table-dark th, .table-dark td {
-    background-color: #2C3E50;
-    border: 1px solid #F39C12;
-    color: #fff;
+  h1, h2 {
+    font-size: 1.3rem;
   }
-  /* Botões para Uso de Peça */
-  .btn-stock {
-    background-color: #F39C12;
-    border: none;
-    color: #1B263B;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin: 5px;
-    text-decoration: none;
+  .progress {
+    height: 30px;
   }
-  .btn-stock:hover {
-    transform: scale(1.05);
-  }
-  /* Botão Administrativo (apenas para superadmin) */
-  .admin-actions {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1100;
-  }
-  .btn-admin {
-    background-color: #00BFFF;
-    border: none;
-    color: #1B263B;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin: 5px;
-    text-decoration: none;
-  }
-  .btn-admin:hover {
-    transform: scale(1.05);
-  }
-  /* Overlay e Mensagem "CAJU AMADURECEU" */
-  .caju-overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.8);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    flex-direction: column;
+  .caju-run {
+    top: -25px;
+    width: 60px;
   }
   .caju-message {
-    color: #F39C12;
-    font-size: 3rem;
-    text-transform: uppercase;
-    text-align: center;
-    padding: 20px;
-    border: 4px dashed #F39C12;
-    margin-bottom: 20px;
-    animation: blink 1s infinite alternate;
+    font-size: 2rem;
   }
-  @keyframes blink {
-    from { opacity: 1; }
-    to { opacity: 0.5; }
+  .btn-close-caju, .btn-admin, .btn-stock {
+    font-size: 0.8rem;
+    padding: 8px 16px;
   }
-  .btn-close-caju {
-    background-color: #F39C12;
-    color: #1B263B;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  .btn-close-caju:hover {
-    transform: scale(1.05);
-  }
-  /* Responsividade */
-  @media (max-width: 576px) {
-    .logo-container {
-      position: static;
-      display: block;
-      margin: 0 auto 10px auto;
-    }
-    .logo-container img {
-      max-height: 60px;
-    }
-    .container {
-      margin-top: 20px;
-    }
-    h1, h2 {
-      font-size: 1.3rem;
-    }
-    .progress {
-      height: 30px;
-    }
-    .caju-run {
-      top: -25px;
-      width: 60px;
-    }
-    .caju-message {
-      font-size: 2rem;
-    }
-    .btn-close-caju, .btn-admin, .btn-stock {
-      font-size: 0.8rem;
-      padding: 8px 16px;
-    }
-  }
+}
