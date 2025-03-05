@@ -1,0 +1,146 @@
+/* ===============================
+   CONFIGURAÇÕES GERAIS
+   =============================== */
+   body {
+    background-color: #001f3f; /* Fundo azul escuro */
+    color: #f8f9fa;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+  }
+  
+  /* ===============================
+     CONTAINER DA PÁGINA
+     =============================== */
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #00274d; /* Fundo dos cards e container */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  }
+  
+  /* ===============================
+     TÍTULO DA PÁGINA
+     =============================== */
+  h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2rem;
+    color: #f8f9fa;
+  }
+  
+  /* ===============================
+     CARDS DE EDIÇÃO DOS CONTÉUDOS
+     =============================== */
+  .card {
+    background-color: #00274d;
+    border: 1px solid #0056b3;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    padding: 15px;
+  }
+  
+  .card-header {
+    background-color: #0056b3;
+    padding: 10px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #f8f9fa;
+    border-radius: 4px 4px 0 0;
+    margin-bottom: 10px;
+  }
+  
+  .card-body {
+    padding: 10px;
+  }
+  
+  /* ===============================
+     FORMULÁRIOS E INPUTS
+     =============================== */
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+    color: #f8f9fa;
+  }
+  
+  .form-control {
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 1rem;
+  }
+  
+  .form-control:focus {
+    border-color: #0056b3;
+    box-shadow: 0 0 0 2px rgba(0,86,179,0.25);
+  }
+  
+  /* ===============================
+     BOTÕES
+     =============================== */
+  .btn-primary {
+    background-color: #28a745;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-right: 10px;
+  }
+  
+  .btn-primary:hover {
+    background-color: #218838;
+  }
+  
+  .btn-secondary {
+    background-color: #6c757d;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 4px;
+    color: #f8f9fa;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 10px;
+  }
+  
+  .btn-secondary:hover {
+    background-color: #5a6268;
+  }
+  
+  /* ===============================
+     ALERTAS
+     =============================== */
+  .alert {
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+  }
+  
+  /* ===============================
+     RESPONSIVIDADE
+     =============================== */
+  @media (max-width: 576px) {
+    .container {
+      padding: 15px;
+    }
+    h1 {
+      font-size: 1.75rem;
+    }
+    .btn-primary, .btn-secondary {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+  }
+  

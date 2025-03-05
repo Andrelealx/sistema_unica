@@ -1,17 +1,14 @@
 <?php
-// Ativa exibição de erros para depuração (remova em produção)
-//error_reporting(E_ALL);
-//ini_set('display_errors', 1);
-
+include 'header.php';
 session_start();
-
 if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
     header("Location: login.php");
     exit;
 }
-
 date_default_timezone_set('America/Sao_Paulo');
 require_once '../inc/conexao.php';
+
+// --- Dados Gerais para o Dashboard ---
 
 // Total de Chamados
 $totalTickets = $pdo->query("SELECT COUNT(*) as total FROM tickets")->fetch(PDO::FETCH_ASSOC)['total'];
@@ -28,13 +25,12 @@ foreach ($statuses as $status) {
     $statusCounts[] = isset($statusData[$status]) ? (int)$statusData[$status] : 0;
 }
 
-// Média de Resolução (calculada em PHP, considerando que as datas estão armazenadas no horário local)
+// Média de Resolução
 $stmtResolved = $pdo->query("SELECT data_criacao, data_atualizacao FROM tickets WHERE status = 'Resolvido'");
 $resolvedTickets = $stmtResolved->fetchAll(PDO::FETCH_ASSOC);
 $totalResolved = count($resolvedTickets);
 $sumSeconds = 0;
 foreach ($resolvedTickets as $ticket) {
-    // Se as datas estão no horário local, utilize 'America/Sao_Paulo'
     $start = new DateTime($ticket['data_criacao'], new DateTimeZone('America/Sao_Paulo'));
     $end   = new DateTime($ticket['data_atualizacao'], new DateTimeZone('America/Sao_Paulo'));
     $diffSeconds = $end->getTimestamp() - $start->getTimestamp();
@@ -42,7 +38,7 @@ foreach ($resolvedTickets as $ticket) {
 }
 if ($totalResolved > 0) {
     $avgSeconds = $sumSeconds / $totalResolved;
-    // Subtrai 3 horas (10.800 segundos) do resultado médio
+    // Subtrai 3 horas (10.800 segundos)
     $avgSeconds -= 10800;
     if ($avgSeconds < 0) {
         $avgSeconds = 0;
@@ -54,10 +50,6 @@ if ($totalResolved > 0) {
 } else {
     $avgResolutionTime = "N/A";
 }
-
-
-
-
 
 // Tendência Mensal (últimos 12 meses)
 $monthlyTrend = [];
@@ -93,15 +85,16 @@ for ($i = 6; $i >= 0; $i--) {
 $dailyLabels = array_keys($dailyTrend);
 $dailyData = array_values($dailyTrend);
 
-// Inclui o header (certifique-se de que ele não inicia a sessão novamente)
-include 'header.php';
+// --- Carregar os Cards Dinâmicos (Novidades/Avisos) ---
+$stmtCards = $pdo->query("SELECT * FROM dashboard_cards ORDER BY id ASC");
+$cards = $stmtCards->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
   <title>Dashboard Administrativo - Unica Serviços</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <!-- Bootstrap CSS e Font Awesome -->
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
@@ -112,8 +105,7 @@ include 'header.php';
   <style>
     .card-header i { margin-right: 8px; }
     .refresh-btn { cursor: pointer; }
-
-    /* Força o texto a usar um tom de cinza-escuro agradável (#343a40) */
+    /* Ajuste de cores para melhor contraste */
     .card .card-header,
     .card .card-body,
     .card .card-body * {
@@ -135,6 +127,7 @@ include 'header.php';
     
     <!-- Cards com Métricas -->
     <div class="row">
+      <!-- Exemplo de Card: Total de Chamados -->
       <div class="col-md-2 mb-3">
         <div class="card bg-primary shadow">
           <div class="card-body text-center">
@@ -144,6 +137,7 @@ include 'header.php';
           </div>
         </div>
       </div>
+      <!-- Outros cards de status... (Abertos, Em Andamento, Resolvidos, Cancelados, Média de Resolução) -->
       <div class="col-md-2 mb-3">
         <div class="card bg-danger shadow">
           <div class="card-body text-center">
@@ -191,41 +185,40 @@ include 'header.php';
       </div>
     </div>
     
-    <!-- Novidades / Avisos -->
+    <!-- Seção de Cards Dinâmicos: Novidades e Avisos -->
     <div class="row">
+      <?php foreach ($cards as $card): ?>
       <div class="col-md-4 mb-3">
-        <div class="card border-info shadow">
-          <div class="card-header bg-info">
-            <i class="fas fa-bullhorn"></i> Novidade
+        <?php
+          $cardType = strtolower($card['card_type']);
+          if ($cardType == 'novidade') {
+              $borderClass = 'border-info';
+              $headerClass = 'bg-info';
+              $icon = 'fas fa-bullhorn';
+          } elseif ($cardType == 'aviso') {
+              $borderClass = 'border-warning';
+              $headerClass = 'bg-warning';
+              $icon = 'fas fa-tools';
+          } else {
+              $borderClass = 'border-secondary';
+              $headerClass = 'bg-secondary';
+              $icon = 'fas fa-info-circle';
+          }
+        ?>
+        <div class="card <?php echo $borderClass; ?> shadow">
+          <div class="card-header <?php echo $headerClass; ?> d-flex justify-content-between align-items-center">
+            <span><i class="<?php echo $icon; ?>"></i> <?php echo ucfirst($cardType); ?></span>
+            <a href="editar_cards.php?id=<?php echo $card['id']; ?>" class="text-dark">
+              <i class="fas fa-edit"></i>
+            </a>
           </div>
           <div class="card-body">
-            <h5 class="card-title">Atualização do Sistema</h5>
-            <p class="card-text">Lançada nova versão com melhorias de desempenho, segurança e uma interface mais intuitiva.</p>
+            <h5 class="card-title"><?php echo htmlspecialchars($card['card_title']); ?></h5>
+            <p class="card-text"><?php echo htmlspecialchars($card['card_text']); ?></p>
           </div>
         </div>
       </div>
-      <div class="col-md-4 mb-3">
-        <div class="card border-warning shadow">
-          <div class="card-header bg-warning">
-            <i class="fas fa-tools"></i> Aviso
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">Manutenção Programada</h5>
-            <p class="card-text">O sistema passará por manutenção neste sábado, das 22h às 02h. Planeje suas atividades.</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4 mb-3">
-        <div class="card border-success shadow">
-          <div class="card-header bg-success">
-            <i class="fas fa-lightbulb"></i> Novidade
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">Nova Funcionalidade</h5>
-            <p class="card-text">Agora é possível filtrar chamados por prioridade e tempo de resposta, facilitando a análise.</p>
-          </div>
-        </div>
-      </div>
+      <?php endforeach; ?>
     </div>
     
     <!-- Gráficos -->
@@ -279,7 +272,7 @@ include 'header.php';
       </div>
     </div>
     
-  </div>
+  </div> <!-- container-fluid -->
   
   <!-- Scripts para Gráficos -->
   <script>
@@ -292,10 +285,10 @@ include 'header.php';
         datasets: [{
           data: <?php echo json_encode($statusCounts); ?>,
           backgroundColor: [
-            'rgba(220,53,69,0.7)',    // Aberto
-            'rgba(255,193,7,0.7)',     // Em Andamento
-            'rgba(40,167,69,0.7)',     // Resolvido
-            'rgba(108,117,125,0.7)'    // Cancelado
+            'rgba(220,53,69,0.7)',
+            'rgba(255,193,7,0.7)',
+            'rgba(40,167,69,0.7)',
+            'rgba(108,117,125,0.7)'
           ],
           borderColor: [
             'rgba(220,53,69,1)',
