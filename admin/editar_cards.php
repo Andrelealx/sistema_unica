@@ -1,9 +1,14 @@
 <?php
 session_start();
-if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
+if (
+    !isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true ||
+    !isset($_SESSION['nivel_acesso']) || $_SESSION['nivel_acesso'] != 2
+) {
     header("Location: login.php");
     exit;
 }
+?>
+
 require_once '../inc/conexao.php';
 
 // Processa atualizações quando o formulário for enviado
