@@ -4,7 +4,7 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
     header("Location: login.php");
     exit;
 }
-
+$nivel = $_SESSION['nivel_acesso']; // Nível de acesso do usuário logado
 $currentPage = basename($_SERVER['PHP_SELF'], ".php");
 $pageTitles = [
   'painel'     => 'Painel',
@@ -15,7 +15,6 @@ $pageTitles = [
   'encomendas' => 'Controle de Encomendas',
   'metas'      => 'Metas'
 ];
-
 $title = isset($pageTitles[$currentPage]) ? $pageTitles[$currentPage] : 'Admin';
 ?>
 <!-- CSS Inline para o cabeçalho -->
@@ -57,7 +56,7 @@ $title = isset($pageTitles[$currentPage]) ? $pageTitles[$currentPage] : 'Admin';
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm" role="navigation">
   <a class="navbar-brand" href="../index.php">
     <img src="../assets/img/logo.png" alt="Logo">
-    <span><?php echo($title); ?></span>
+    <span><?php echo $title; ?></span>
   </a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#adminNavbar" 
           aria-controls="adminNavbar" aria-expanded="false" aria-label="Alternar navegação">
@@ -66,6 +65,7 @@ $title = isset($pageTitles[$currentPage]) ? $pageTitles[$currentPage] : 'Admin';
   
   <div class="collapse navbar-collapse" id="adminNavbar">
     <ul class="navbar-nav mr-auto">
+      <!-- Itens visíveis para todos os níveis -->
       <li class="nav-item <?php echo ($currentPage == 'painel') ? 'active' : ''; ?>">
         <a class="nav-link" href="painel.php"><i class="fas fa-tachometer-alt"></i> Chamados</a>
       </li>
@@ -75,19 +75,24 @@ $title = isset($pageTitles[$currentPage]) ? $pageTitles[$currentPage] : 'Admin';
       <li class="nav-item <?php echo ($currentPage == 'visitas') ? 'active' : ''; ?>">
         <a class="nav-link" href="visitas.php"><i class="fas fa-calendar-alt"></i> Visitas</a>
       </li>
-      <?php if(isset($_SESSION['admin_id']) && $_SESSION['nivel_acesso'] == 2): ?>
-        <li class="nav-item <?php echo ($currentPage == 'usuarios') ? 'active' : ''; ?>">
-          <a class="nav-link" href="usuarios.php"><i class="fas fa-users-cog"></i> Gerenciar Usuários</a>
-        </li>
+      <li class="nav-item <?php echo ($currentPage == 'metas') ? 'active' : ''; ?>">
+        <a class="nav-link" href="metas.php"><i class="fas fa-bullhorn"></i> Metas</a>
+      </li>
+      
+      <?php if ($nivel == 1 || $nivel == 2): ?>
+        <!-- Itens para Administrador e Super Admin -->
         <li class="nav-item <?php echo ($currentPage == 'estoque') ? 'active' : ''; ?>">
           <a class="nav-link" href="estoque.php"><i class="fas fa-boxes"></i> Estoque</a>
         </li>
         <li class="nav-item <?php echo ($currentPage == 'encomendas') ? 'active' : ''; ?>">
           <a class="nav-link" href="encomendas.php"><i class="fas fa-truck"></i> Encomendas</a>
         </li>
-        <!-- Nova página metas.php -->
-        <li class="nav-item <?php echo ($currentPage == 'metas') ? 'active' : ''; ?>">
-          <a class="nav-link" href="metas.php"><i class="fas fa-bullhorn"></i> Metas</a>
+      <?php endif; ?>
+      
+      <?php if ($nivel == 2): ?>
+        <!-- Exclusivo para Super Admin -->
+        <li class="nav-item <?php echo ($currentPage == 'usuarios') ? 'active' : ''; ?>">
+          <a class="nav-link" href="usuarios.php"><i class="fas fa-users-cog"></i> Gerenciar Usuários</a>
         </li>
       <?php endif; ?>
     </ul>
