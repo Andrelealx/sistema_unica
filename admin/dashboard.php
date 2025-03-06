@@ -137,7 +137,7 @@ $cards = $stmtCards->fetchAll(PDO::FETCH_ASSOC);
           </div>
         </div>
       </div>
-      <!-- Outros cards de status... (Abertos, Em Andamento, Resolvidos, Cancelados, Média de Resolução) -->
+      <!-- Outros cards de status... -->
       <div class="col-md-2 mb-3">
         <div class="card bg-danger shadow">
           <div class="card-body text-center">
@@ -208,9 +208,11 @@ $cards = $stmtCards->fetchAll(PDO::FETCH_ASSOC);
         <div class="card <?php echo $borderClass; ?> shadow">
           <div class="card-header <?php echo $headerClass; ?> d-flex justify-content-between align-items-center">
             <span><i class="<?php echo $icon; ?>"></i> <?php echo ucfirst($cardType); ?></span>
-            <a href="editar_cards.php?id=<?php echo $card['id']; ?>" class="text-dark">
-              <i class="fas fa-edit"></i>
-            </a>
+            <?php if (isset($_SESSION['nivel_acesso']) && $_SESSION['nivel_acesso'] == 2): ?>
+              <a href="editar_cards.php?id=<?php echo $card['id']; ?>" class="text-dark">
+                <i class="fas fa-edit"></i>
+              </a>
+            <?php endif; ?>
           </div>
           <div class="card-body">
             <h5 class="card-title"><?php echo htmlspecialchars($card['card_title']); ?></h5>
