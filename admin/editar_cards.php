@@ -1,5 +1,7 @@
 <?php
 session_start();
+
+// Restrição de acesso: somente admin com nível 2 podem acessar
 if (
     !isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true ||
     !isset($_SESSION['nivel_acesso']) || $_SESSION['nivel_acesso'] != 2
@@ -7,7 +9,6 @@ if (
     header("Location: login.php");
     exit;
 }
-?>
 
 require_once '../inc/conexao.php';
 
@@ -32,11 +33,12 @@ $cards = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
+  <title>Editar Cards do Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Editar Cards - Dashboard</title>
   <!-- Bootstrap CSS e Font Awesome -->
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+  <!-- Seu CSS customizado para essa página -->
   <link rel="stylesheet" href="../assets/css/editar_cards.css">
 </head>
 <body>
@@ -68,7 +70,7 @@ $cards = $stmt->fetchAll(PDO::FETCH_ASSOC);
       </div>
       <?php endforeach; ?>
       <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-      <a href="painel.php" class="btn btn-secondary">Voltar</a>
+      <a href="Dashboard.php" class="btn btn-secondary">Voltar</a>
     </form>
   </div>
   
