@@ -1,209 +1,30 @@
-body {
-    margin: 0;
-    background-color: #001f3f;
-    color: #f8f9fa;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  }
-  .container {
-    width: 90%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding-top: 20px;
-    padding-bottom: 20px;
-  }
-  h2 {
-    font-weight: 600;
-    margin-bottom: 20px;
-    font-size: 1.75rem;
-    color: #f8f9fa;
-  }
-  /* Responsividade para tabelas */
-  .table-responsive {
-    margin-top: 20px;
-  }
-  .table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: #00274d;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    overflow: hidden;
-  }
-  .table thead th {
-    background-color: #0056b3; 
-    color: #f8f9fa;
-    padding: 10px;
-    text-align: center;
-  }
-  .table tbody td {
-    padding: 10px;
-    vertical-align: middle;
-    font-size: 0.95rem;
-    text-align: center;
-    border-bottom: 1px solid #0056b3;
-  }
-  .table-striped tbody tr:nth-of-type(odd) {
-    background-color: #003d73;
-  }
-  .table-bordered {
-    border: 1px solid #0056b3;
-  }
-  /* Botões gerais */
-  .btn {
-    display: inline-block;
-    padding: 6px 12px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    text-align: center;
-    text-decoration: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin: 2px;
-  }
-  .btn-info {
-    background-color: #17a2b8;
-    border: none;
-    color: #fff;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-  }
-  .btn-info:hover {
-    background-color: #138496;
-    transform: scale(1.02);
-  }
-  .btn-success {
-    background-color: #28a745;
-    border: none;
-    color: #fff;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-  }
-  .btn-success:hover {
-    background-color: #218838;
-    transform: scale(1.02);
-  }
-  .btn-danger {
-    background-color: #dc3545;
-    border: none;
-    color: #fff;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-  }
-  .btn-danger:hover {
-    background-color: #c82333;
-    transform: scale(1.02);
-  }
-  .btn-secondary {
-    background-color: #6c757d;
-    border: none;
-    color: #fff;
-    transition: background-color 0.3s ease;
-  }
-  .btn-secondary:hover {
-    background-color: #5a6268;
-  }
-  /* Botões para Entrada/Saída de estoque com visual aprimorado */
-  .btn-stock-entrada {
-    background: linear-gradient(45deg, #20c997, #17a2b8);
-    border: none;
-    color: #fff;
-    padding: 8px 16px;
-    font-size: 1rem;
-    border-radius: 6px;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-    text-decoration: none;
-    margin-right: 10px; /* Espaço entre os botões */
-  }
-  .btn-stock-entrada:hover {
-    background: linear-gradient(45deg, #17a2b8, #138f9a);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  }
-  .btn-stock-saida {
-    background: linear-gradient(45deg, #fd7e14, #e8590c);
-    border: none;
-    color: #fff;
-    padding: 8px 16px;
-    font-size: 1rem;
-    border-radius: 6px;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-    text-decoration: none;
-  }
-  .btn-stock-saida:hover {
-    background: linear-gradient(45deg, #e8590c, #d74700);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  }
-  /* Alertas e Cards */
-  .alert {
-    border-radius: 4px;
-    background-color: #0056b3;
-    color: #f8f9fa;
-    padding: 10px;
-    margin-bottom: 20px;
-    text-align: center;
-  }
-  .card {
-    background-color: #00274d;
-    border: 1px solid #0056b3;
-    border-radius: 4px;
-    margin-bottom: 20px;
-  }
-  .card-header {
-    background-color: #0056b3;
-    color: #f8f9fa;
-    padding: 10px;
-    font-size: 1.1rem;
-    border-bottom: 1px solid #0056b3;
-  }
-  .card-body {
-    padding: 15px;
-  }
-  .form-label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 500;
-  }
-  .form-control {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-bottom: 10px;
-    font-size: 0.9rem;
-    color: #000;
-  }
-  /* Formulário de adicionar produto inicia oculto */
-  .hidden-form {
-    display: none;
-  }
-
-  /* Media Query para dispositivos mobile */
-  @media (max-width: 576px) {
-    .container {
-      width: 100%;
-      padding: 0 10px;
-    }
-    h2 {
-      font-size: 1.5rem;
-    }
-    .table thead th, .table tbody td {
-      padding: 8px;
-      font-size: 0.85rem;
-    }
-    .btn, .btn-stock-entrada, .btn-stock-saida {
-      font-size: 0.8rem;
-      padding: 4px 8px;
-    }
-  }
-  /* ===============================
+/* ===============================
    CONFIGURAÇÕES GERAIS
    =============================== */
-body {
+   body {
+    margin: 0;
     background-color: #001f3f; /* Fundo azul escuro */
     color: #f8f9fa;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     line-height: 1.6;
     padding-bottom: 20px;
+  }
+  
+  .container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 15px; /* Ajustado de 20px para consistência com o código embutido */
+  }
+  
+  /* ===============================
+     TÍTULOS
+     =============================== */
+  h2 {
+    color: #f8f9fa;
+    font-weight: 600;
+    margin-bottom: 20px;
+    font-size: 1.75rem;
   }
   
   /* ===============================
@@ -226,20 +47,18 @@ body {
   }
   
   /* ===============================
-     TÍTULOS
-     =============================== */
-  h2 {
-    color: #f8f9fa;
-    font-weight: 600;
-    margin-bottom: 20px;
-    font-size: 1.75rem;
-  }
-  
-  /* ===============================
      TABELA
      =============================== */
+  .table-responsive {
+    margin-top: 20px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
   .table {
-    background-color: #00274d;  /* Fundo da tabela */
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #00274d; /* Fundo da tabela */
     border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     overflow: hidden;
@@ -250,14 +69,19 @@ body {
     color: #f8f9fa;
     padding: 10px;
     text-align: center;
+    font-size: 0.9rem;
+    position: sticky;
+    top: 0;
+    z-index: 1;
   }
   
   .table tbody td {
     padding: 10px;
     vertical-align: middle;
     font-size: 0.95rem;
-    color: #f8f9fa;
+    color: #f8f9fa; /* Garantindo texto claro */
     text-align: center;
+    border-bottom: 1px solid #0056b3;
   }
   
   .table-striped tbody tr:nth-of-type(odd) {
@@ -269,14 +93,28 @@ body {
   }
   
   /* ===============================
-     BOTÕES
+     BOTÕES GERAIS
      =============================== */
+  .btn {
+    display: inline-block;
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 2px;
+    transition: all 0.3s ease;
+  }
+  
   .btn-info {
     background-color: #17a2b8;
     border: none;
     color: #fff;
     transition: background-color 0.3s ease, transform 0.3s ease;
   }
+  
   .btn-info:hover {
     background-color: #138496;
     transform: scale(1.02);
@@ -288,8 +126,21 @@ body {
     color: #fff;
     transition: background-color 0.3s ease, transform 0.3s ease;
   }
+  
   .btn-success:hover {
     background-color: #218838;
+    transform: scale(1.02);
+  }
+  
+  .btn-danger {
+    background-color: #dc3545;
+    border: none;
+    color: #fff;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .btn-danger:hover {
+    background-color: #c82333;
     transform: scale(1.02);
   }
   
@@ -299,12 +150,70 @@ body {
     color: #fff;
     transition: background-color 0.3s ease;
   }
+  
   .btn-secondary:hover {
     background-color: #5a6268;
   }
   
   /* ===============================
-     ALERTS
+     BOTÕES DE ESTOQUE
+     =============================== */
+  .stock-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 5px;
+  }
+  
+  .btn-stock-entrada {
+    background: linear-gradient(45deg, #20c997, #17a2b8);
+    border: none;
+    color: #fff;
+    padding: 8px 16px;
+    font-size: 1rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-right: 10px; /* Espaço entre botões no desktop */
+  }
+  
+  .btn-stock-entrada:hover,
+  .btn-stock-entrada:active {
+    background: linear-gradient(45deg, #17a2b8, #138f9a);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+  
+  .btn-stock-saida {
+    background: linear-gradient(45deg, #fd7e14, #e8590c);
+    border: none;
+    color: #fff;
+    padding: 8px 16px;
+    font-size: 1rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  
+  .btn-stock-saida:hover,
+  .btn-stock-saida:active {
+    background: linear-gradient(45deg, #e8590c, #d74700);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+  
+  /* ===============================
+     ALERTAS E CARDS
      =============================== */
   .alert {
     border-radius: 4px;
@@ -313,25 +222,56 @@ body {
     padding: 10px;
     margin-bottom: 20px;
     border: none;
+    text-align: center;
+  }
+  
+  .card {
+    background-color: #00274d;
+    border: 1px solid #0056b3;
+    border-radius: 4px;
+    margin-bottom: 20px;
+  }
+  
+  .card-header {
+    background-color: #0056b3;
+    color: #f8f9fa;
+    padding: 10px;
+    font-size: 1.1rem;
+    border-bottom: 1px solid #0056b3;
+  }
+  
+  .card-body {
+    padding: 15px;
   }
   
   /* ===============================
-     RESPONSIVIDADE
+     FORMULÁRIOS
      =============================== */
-  @media (max-width: 768px) {
-    .navbar-brand {
-      font-size: 1.2rem;
-    }
-    h2 {
-      font-size: 1.5rem;
-    }
+  .form-label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    color: #000;
+  }
+  
+  .hidden-form {
+    display: none;
   }
   
   /* ===============================
      ÁREA DE COMENTÁRIOS (DENTRO DO MODAL)
      =============================== */
   .comentarios-section {
-    background-color: #ffffff;  /* Fundo branco para contraste */
+    background-color: #ffffff;
     border: 1px solid #ddd;
     border-radius: 6px;
     padding: 16px;
@@ -357,6 +297,7 @@ body {
     border-bottom: 1px solid #eee;
     padding: 10px 0;
   }
+  
   .comentario:last-child {
     border-bottom: none;
   }
@@ -370,7 +311,7 @@ body {
   .comentario-author {
     font-weight: bold;
     font-size: 0.95rem;
-    color: #000;  /* Texto preto */
+    color: #000;
   }
   
   .comentario-date {
@@ -381,7 +322,7 @@ body {
   
   .comentario-body {
     font-size: 0.95rem;
-    color: #000;  /* Texto preto */
+    color: #000;
     line-height: 1.5;
   }
   
@@ -392,7 +333,6 @@ body {
     padding: 12px 0;
   }
   
-  /* Formulário de Comentário */
   .comentario-form h6 {
     font-size: 1rem;
     font-weight: bold;
@@ -421,7 +361,7 @@ body {
      SEARCH BAR (FILTROS E BUSCA)
      =============================== */
   .search-bar {
-    background-color: #001237;  /* Mesma cor do cabeçalho */
+    background-color: #001237;
     padding: 20px;
     margin-bottom: 25px;
     border-radius: 8px;
@@ -467,25 +407,89 @@ body {
   }
   
   /* ===============================
-     MODAL DE DETALHES (SOMENTE PARA DETALHES DO CHAMADO)
+     MODAL DE DETALHES
      =============================== */
   .modal.fade[id^="detalhesModal"] .modal-content {
-    background-color: #ffffff !important; /* Fundo branco */
-    color: #000000 !important;            /* Texto preto */
+    background-color: #ffffff !important;
+    color: #000000 !important;
   }
   
   .modal.fade[id^="detalhesModal"] .modal-header,
   .modal.fade[id^="detalhesModal"] .modal-footer {
-    background-color: #f2f2f2 !important; /* Cinza claro para header/footer */
+    background-color: #f2f2f2 !important;
     border: none;
     color: #000000 !important;
   }
   
   .modal.fade[id^="detalhesModal"] .close {
-    color: #000000 !important; /* Ícone de fechar em preto */
+    color: #000000 !important;
   }
   
   .modal.fade[id^="detalhesModal"] .modal-body {
     color: #000000 !important;
   }
   
+  /* ===============================
+     RESPONSIVIDADE
+     =============================== */
+  @media (max-width: 576px) {
+    .container {
+      width: 100%;
+      padding: 10px; /* Ajustado para consistência */
+    }
+  
+    h2 {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+    }
+  
+    .table thead th,
+    .table tbody td {
+      padding: 8px;
+      font-size: 0.85rem;
+    }
+  
+    .btn,
+    .btn-stock-entrada,
+    .btn-stock-saida {
+      font-size: 0.8rem;
+      padding: 4px 8px;
+    }
+  
+    .stock-buttons {
+      flex-direction: column;
+      gap: 8px;
+      padding: 5px 0;
+    }
+  
+    .btn-stock-entrada,
+    .btn-stock-saida {
+      width: 90%;
+      margin: 0 auto;
+      margin-right: 0; /* Remove margem direita no mobile */
+    }
+  
+    .btn-stock-entrada i,
+    .btn-stock-saida i {
+      font-size: 1.1rem;
+      margin-right: 5px;
+    }
+  
+    .btn-stock-entrada:hover,
+    .btn-stock-entrada:active,
+    .btn-stock-saida:hover,
+    .btn-stock-saida:active {
+      transform: scale(1.03);
+      box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .navbar-brand {
+      font-size: 1.2rem;
+    }
+  
+    h2 {
+      font-size: 1.5rem;
+    }
+  }

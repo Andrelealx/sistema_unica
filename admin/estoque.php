@@ -1,13 +1,12 @@
 <?php
-// header.php já inicia sessão, faz verificação, etc.
 include 'header.php';
 
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-// Se não estiver iniciada a sessão, inicie (caso header.php não faça isso)
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+if (!isset($_SESSION['nivel_acesso']) || ($_SESSION['nivel_acesso'] != 1 && $_SESSION['nivel_acesso'] != 2)) {
+    header("Location: login.php");
+    exit;
 }
 
 require_once __DIR__ . '/../inc/conexao.php';
@@ -17,7 +16,6 @@ $stockAdjust   = false;
 $produtoAdjust = null;
 $edit          = false;
 
-// Ações via GET
 if (isset($_GET['action'])) {
     $action = $_GET['action'];
 
@@ -47,9 +45,7 @@ if (isset($_GET['action'])) {
     }
 }
 
-// Ações via POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Ajuste de estoque (Entrada/Saída)
     if (isset($_POST['operation']) && in_array($_POST['operation'], ['entrada', 'saida'])) {
         $operation      = $_POST['operation'];
         $id             = (int)$_POST['id'];
@@ -60,7 +56,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([$adjustQuantity, $id]);
             $message = "Entrada de estoque realizada com sucesso!";
         } else {
-            // Saída
             $stmt = $pdo->prepare("SELECT quantidade FROM produtos WHERE id = ?");
             $stmt->execute([$id]);
             $current = $stmt->fetchColumn();
@@ -72,9 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $message = "Saída de estoque realizada com sucesso!";
             }
         }
-    }
-    // Edição de produto
-    elseif (isset($_POST['id']) && !empty($_POST['id'])) {
+    } elseif (isset($_POST['id']) && !empty($_POST['id'])) {
         $id         = (int)$_POST['id'];
         $nome       = $_POST['nome'];
         $descricao  = $_POST['descricao'];
@@ -87,16 +80,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                WHERE id = ?");
         $stmt->execute([$nome, $descricao, $quantidade, $preco, $categoria, $id]);
         $message = "Produto atualizado com sucesso!";
-    }
-    // Inserção de novo produto com reutilização do menor id disponível
-    else {
+    } else {
         $nome       = $_POST['nome'];
         $descricao  = $_POST['descricao'];
         $quantidade = $_POST['quantidade'];
         $preco      = $_POST['preco'];
         $categoria  = $_POST['categoria'];
 
-        // Buscar o menor id disponível:
         $stmt = $pdo->query("SELECT MIN(id) AS min_id FROM produtos");
         $min_id = $stmt->fetchColumn();
 
@@ -126,7 +116,6 @@ if (isset($_GET['message'])) {
     $message = $_GET['message'];
 }
 
-// Carrega todos os produtos
 $stmt     = $pdo->query("SELECT * FROM produtos");
 $produtos = $stmt->fetchAll();
 ?>
@@ -134,30 +123,23 @@ $produtos = $stmt->fetchAll();
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <!-- Meta Tag para Responsividade -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Bootstrap CSS e Font Awesome -->
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-  <!-- CSS Customizado para o Dashboard -->
   <link rel="stylesheet" href="../assets/css/estoque.css">
   <title>Gerenciamento de Estoque</title>
 </head>
 <body>
 
-<!-- A navbar do header.php já foi incluída -->
-
 <div class="container">
     <h2>Gerenciamento de Estoque</h2>
 
-    <!-- Exibe mensagem (sucesso/erro) -->
     <?php if (!empty($message)): ?>
         <div class="alert">
             <?= htmlspecialchars($message) ?>
         </div>
     <?php endif; ?>
 
-    <!-- Ajuste de Estoque (entrada/saída) -->
     <?php if ($stockAdjust && $produtoAdjust): ?>
         <div class="card">
             <div class="card-header">
@@ -182,12 +164,10 @@ $produtos = $stmt->fetchAll();
         </div>
     <?php endif; ?>
 
-    <!-- Botão que exibe/oculta formulário de adicionar produto -->
     <?php if (!$edit): ?>
         <button id="toggleFormButton" class="btn btn-info">
             <i class="fas fa-plus"></i> Adicionar Produto
         </button>
-        <!-- Formulário de adicionar produto (inicialmente oculto) -->
         <div id="productForm" class="card hidden-form">
             <div class="card-header">
                 <i class="fas fa-plus-circle"></i> Adicionar Produto
@@ -212,7 +192,6 @@ $produtos = $stmt->fetchAll();
         </div>
     <?php endif; ?>
 
-    <!-- Formulário de edição de produto -->
     <?php if ($edit && isset($produtoEdit)): ?>
         <div class="card">
             <div class="card-header">
@@ -247,7 +226,6 @@ $produtos = $stmt->fetchAll();
         </div>
     <?php endif; ?>
 
-    <!-- Lista de Produtos -->
     <h2>Lista de Produtos</h2>
     <div class="table-responsive">
       <table class="table table-striped table-bordered">
@@ -274,12 +252,10 @@ $produtos = $stmt->fetchAll();
                           <td><?= htmlspecialchars($produto['preco']) ?></td>
                           <td><?= htmlspecialchars($produto['categoria']) ?></td>
                           <td>
-                              <!-- Botão Editar -->
                               <a href="estoque.php?action=edit&id=<?= $produto['id'] ?>"
                                  class="btn btn-success btn-sm">
                                   <i class="fas fa-edit"></i> Editar
                               </a>
-                              <!-- Botão Apagar -->
                               <a href="estoque.php?action=delete&id=<?= $produto['id'] ?>"
                                  class="btn btn-danger btn-sm"
                                  onclick="return confirm('Deseja realmente apagar este produto?');">
@@ -287,16 +263,16 @@ $produtos = $stmt->fetchAll();
                               </a>
                           </td>
                           <td>
-                              <!-- Botão Entrada -->
-                              <a href="estoque.php?action=entrada&id=<?= $produto['id'] ?>"
-                                 class="btn-stock-entrada">
-                                  <i class="fas fa-plus-circle"></i> Entrada
-                              </a>
-                              <!-- Botão Saída -->
-                              <a href="estoque.php?action=saida&id=<?= $produto['id'] ?>"
-                                 class="btn-stock-saida">
-                                  <i class="fas fa-minus-circle"></i> Saída
-                              </a>
+                              <div class="stock-buttons">
+                                  <a href="estoque.php?action=entrada&id=<?= $produto['id'] ?>"
+                                     class="btn-stock-entrada">
+                                      <i class="fas fa-plus-circle"></i> Entrada
+                                  </a>
+                                  <a href="estoque.php?action=saida&id=<?= $produto['id'] ?>"
+                                     class="btn-stock-saida">
+                                      <i class="fas fa-minus-circle"></i> Saída
+                                  </a>
+                              </div>
                           </td>
                       </tr>
                   <?php endforeach; ?>
@@ -307,9 +283,8 @@ $produtos = $stmt->fetchAll();
               <?php endif; ?>
           </tbody>
       </table>
-    </div><!-- /.table-responsive -->
-
-</div><!-- /.container -->
+    </div>
+</div>
 
 <script>
 document.getElementById('toggleFormButton').addEventListener('click', function() {
@@ -318,7 +293,6 @@ document.getElementById('toggleFormButton').addEventListener('click', function()
 });
 </script>
 
-<!-- Bootstrap JS (opcional) -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
