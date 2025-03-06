@@ -147,104 +147,107 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
       Lista de Usuários
     </div>
     <div class="card-body">
-      <table class="table table-bordered table-hover">
-        <thead class="thead-dark">
-          <tr>
-            <th>ID</th>
-            <th>Nome</th>
-            <th>E-mail</th>
-            <th>Nível de Acesso</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php foreach ($usuarios as $usuario): ?>
-          <tr>
-            <td><?php echo $usuario['id']; ?></td>
-            <td><?php echo htmlspecialchars($usuario['nome']); ?></td>
-            <td><?php echo htmlspecialchars($usuario['email']); ?></td>
-            <td>
-              <?php 
-                if ($usuario['nivel_acesso'] == 2) {
-                  echo "Super Admin";
-                } elseif ($usuario['nivel_acesso'] == 1) {
-                  echo "Administrador";
-                } elseif ($usuario['nivel_acesso'] == 3) {
-                  echo "Técnico de Helpdesk";
-                } else {
-                  echo "Outro";
-                }
-              ?>
-            </td>
-            <td>
-              <!-- Botão para abrir modal de edição -->
-              <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editModal<?php echo $usuario['id']; ?>">
-                <i class="fas fa-edit"></i> Editar
-              </button>
-              <!-- Botão de Exclusão (impede exclusão do Super Admin) -->
-              <?php if ($usuario['id'] != 2): ?>
-                <form action="usuarios.php" method="POST" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja excluir esse usuário?');">
-                  <input type="hidden" name="action" value="delete">
-                  <input type="hidden" name="user_id" value="<?php echo $usuario['id']; ?>">
-                  <button type="submit" class="btn btn-danger btn-sm">
-                    <i class="fas fa-trash"></i> Excluir
-                  </button>
-                </form>
-              <?php endif; ?>
-            </td>
-          </tr>
-          
-          <!-- Modal de Edição do Usuário -->
-          <div class="modal fade" id="editModal<?php echo $usuario['id']; ?>" tabindex="-1" role="dialog" aria-labelledby="editModalLabel<?php echo $usuario['id']; ?>" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-scrollable" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="editModalLabel<?php echo $usuario['id']; ?>">Editar Usuário (ID: <?php echo $usuario['id']; ?>)</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-body">
-                  <!-- Formulário de edição -->
-                  <form action="usuarios.php" method="POST">
-                    <input type="hidden" name="action" value="update">
+      <!-- .table-responsive ajuda a evitar que a tabela quebre em telas pequenas -->
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+          <thead class="thead-dark">
+            <tr>
+              <th>ID</th>
+              <th>Nome</th>
+              <th>E-mail</th>
+              <th>Nível de Acesso</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach ($usuarios as $usuario): ?>
+            <tr>
+              <td><?php echo $usuario['id']; ?></td>
+              <td><?php echo htmlspecialchars($usuario['nome']); ?></td>
+              <td><?php echo htmlspecialchars($usuario['email']); ?></td>
+              <td>
+                <?php 
+                  if ($usuario['nivel_acesso'] == 2) {
+                    echo "Super Admin";
+                  } elseif ($usuario['nivel_acesso'] == 1) {
+                    echo "Administrador";
+                  } elseif ($usuario['nivel_acesso'] == 3) {
+                    echo "Técnico de Helpdesk";
+                  } else {
+                    echo "Outro";
+                  }
+                ?>
+              </td>
+              <td>
+                <!-- Botão para abrir modal de edição -->
+                <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editModal<?php echo $usuario['id']; ?>">
+                  <i class="fas fa-edit"></i> Editar
+                </button>
+                <!-- Botão de Exclusão (impede exclusão do Super Admin) -->
+                <?php if ($usuario['id'] != 2): ?>
+                  <form action="usuarios.php" method="POST" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja excluir esse usuário?');">
+                    <input type="hidden" name="action" value="delete">
                     <input type="hidden" name="user_id" value="<?php echo $usuario['id']; ?>">
-                    
-                    <div class="form-group">
-                      <label for="nome-<?php echo $usuario['id']; ?>">Nome</label>
-                      <input type="text" name="nome" id="nome-<?php echo $usuario['id']; ?>" class="form-control" value="<?php echo htmlspecialchars($usuario['nome']); ?>" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="email-<?php echo $usuario['id']; ?>">E-mail</label>
-                      <input type="email" name="email" id="email-<?php echo $usuario['id']; ?>" class="form-control" value="<?php echo htmlspecialchars($usuario['email']); ?>" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="nivel-<?php echo $usuario['id']; ?>">Nível de Acesso</label>
-                      <select name="nivel_acesso" id="nivel-<?php echo $usuario['id']; ?>" class="form-control">
-                        <option value="2" <?php echo ($usuario['nivel_acesso'] == 2) ? 'selected' : ''; ?>>Super Admin</option>
-                        <option value="1" <?php echo ($usuario['nivel_acesso'] == 1) ? 'selected' : ''; ?>>Administrador</option>
-                        <option value="3" <?php echo ($usuario['nivel_acesso'] == 3) ? 'selected' : ''; ?>>Técnico de Helpdesk</option>
-                      </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                    <button type="submit" class="btn btn-danger btn-sm">
+                      <i class="fas fa-trash"></i> Excluir
+                    </button>
                   </form>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                <?php endif; ?>
+              </td>
+            </tr>
+            
+            <!-- Modal de Edição do Usuário -->
+            <div class="modal fade" id="editModal<?php echo $usuario['id']; ?>" tabindex="-1" role="dialog" aria-labelledby="editModalLabel<?php echo $usuario['id']; ?>" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-scrollable" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel<?php echo $usuario['id']; ?>">Editar Usuário (ID: <?php echo $usuario['id']; ?>)</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <!-- Formulário de edição -->
+                    <form action="usuarios.php" method="POST">
+                      <input type="hidden" name="action" value="update">
+                      <input type="hidden" name="user_id" value="<?php echo $usuario['id']; ?>">
+                      
+                      <div class="form-group">
+                        <label for="nome-<?php echo $usuario['id']; ?>">Nome</label>
+                        <input type="text" name="nome" id="nome-<?php echo $usuario['id']; ?>" class="form-control" value="<?php echo htmlspecialchars($usuario['nome']); ?>" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="email-<?php echo $usuario['id']; ?>">E-mail</label>
+                        <input type="email" name="email" id="email-<?php echo $usuario['id']; ?>" class="form-control" value="<?php echo htmlspecialchars($usuario['email']); ?>" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="nivel-<?php echo $usuario['id']; ?>">Nível de Acesso</label>
+                        <select name="nivel_acesso" id="nivel-<?php echo $usuario['id']; ?>" class="form-control">
+                          <option value="2" <?php echo ($usuario['nivel_acesso'] == 2) ? 'selected' : ''; ?>>Super Admin</option>
+                          <option value="1" <?php echo ($usuario['nivel_acesso'] == 1) ? 'selected' : ''; ?>>Administrador</option>
+                          <option value="3" <?php echo ($usuario['nivel_acesso'] == 3) ? 'selected' : ''; ?>>Técnico de Helpdesk</option>
+                        </select>
+                      </div>
+                      <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <!-- Fim do Modal de Edição -->
-          
-          <?php endforeach; ?>
-        </tbody>
-      </table>
+            <!-- Fim do Modal de Edição -->
+            
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div> <!-- .table-responsive -->
     </div>
   </div>
   
   <!-- jQuery e Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
