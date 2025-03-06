@@ -217,7 +217,7 @@
   <footer class="footer">
     <div class="container">
       <p>Se preferir, você pode solicitar seu chamado pelo número <strong>21 2010-7081</strong>.</p>
-      <p>Desenvolvido por <strong>Ùnica Serviços</strong></p>
+      <p>Desenvolvido por <strong>Única Serviços</strong></p>
     </div>
   </footer>
 
