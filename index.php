@@ -7,6 +7,10 @@
   <meta charset="UTF-8">
   <title>Unica Serviços - Abrir Chamado</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <!-- Manifest para PWA -->
+  <link rel="manifest" href="/manifest.json">
+  <!-- Define a cor do tema para navegadores que suportam -->
+  <meta name="theme-color" content="#343a40">
   <!-- Favicon -->
   <link rel="icon" href="assets/img/favicon.ico" type="image/x-icon">
   <!-- Bootstrap CSS -->
@@ -26,7 +30,6 @@
       margin: 0;
       padding-bottom: 20px;
     }
-
     /* Cabeçalho com efeito profissional */
     header.header {
       background-color: #001237;
@@ -57,6 +60,10 @@
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
       animation: fadeInDown 1s;
     }
+    @keyframes fadeInDown {
+      0% { transform: translateY(-50%); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
     header.header .admin-button a {
       font-size: 1rem;
       padding: 10px 20px;
@@ -66,7 +73,6 @@
       0% { transform: translateX(100%); opacity: 0; }
       100% { transform: translateX(0); opacity: 1; }
     }
-
     /* Container do formulário com efeito de card moderno */
     .container.my-4 {
       background-color: rgba(255, 255, 255, 0.05);
@@ -74,9 +80,8 @@
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.2);
       margin-top: 30px;
-      margin-bottom: 0; /* remove a margem inferior */
+      margin-bottom: 0;
     }
-
     form#formChamado label {
       font-weight: 500;
       color: #f8f9fa;
@@ -88,7 +93,7 @@
       color: #f8f9fa;
     }
     form#formChamado .form-control:focus {
-      border-color: #66afe9;
+      border-color: #0056b3;
       box-shadow: none;
     }
     form#formChamado button {
@@ -101,14 +106,13 @@
     form#formChamado button:hover {
       background-color: #0056b3;
     }
-
     /* Notificação centralizada com animações aprimoradas */
     #notification {
       position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background-color: #28a745; /* Verde */
+      background-color: #28a745;
       color: #fff;
       padding: 20px 30px;
       border-radius: 8px;
@@ -129,17 +133,52 @@
       0% { opacity: 1; transform: translate(-50%, -50%); }
       100% { opacity: 0; transform: translate(-50%, -60%); }
     }
-
     /* Rodapé com mesma cor do cabeçalho */
     footer.footer {
-      background-color: #001237; /* Mesma cor do cabeçalho */
+      background-color: #001237;
       color: #f8f9fa;
       text-align: center;
       padding: 15px 0;
-      margin-top: 0; /* Garante que não haja faixa extra acima do rodapé */
+      margin-top: 0;
     }
     footer.footer p {
       margin: 0;
+    }
+    
+    /* ===============================
+       RESPONSIVIDADE PARA DISPOSITIVOS MÓVEIS
+       =============================== */
+    @media (max-width: 576px) {
+      header.header .container {
+        flex-direction: column;
+        text-align: center;
+      }
+      header.header .logo img {
+        max-height: 50px;
+        margin: 0 auto;
+      }
+      header.header .titulo h1 {
+        font-size: 1.8rem;
+      }
+      header.header .admin-button {
+        margin-top: 10px;
+      }
+      header.header .admin-button a {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+      }
+      .container.my-4 {
+        width: 95%;
+        padding: 15px;
+      }
+      form#formChamado .form-control,
+      form#formChamado .form-control-file {
+        font-size: 0.9rem;
+      }
+      form#formChamado button {
+        font-size: 1rem;
+        padding: 10px;
+      }
     }
   </style>
 </head>
@@ -160,7 +199,7 @@
     </div>
   </header>
 
-  <!-- Notificação centralizada (aparece apenas se houver mensagem na sessão) -->
+  <!-- Notificação centralizada -->
   <?php
     if(isset($_SESSION['sucesso'])){
       echo '<div id="notification" class="animate__animated animate__zoomInDown">' . $_SESSION['sucesso'] . '</div>';
@@ -247,6 +286,5 @@ if(isset($_SESSION['erro'])){
   unset($_SESSION['erro']);
 }
 ?>
-
 </body>
 </html>

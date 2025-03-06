@@ -12,7 +12,7 @@ $pageTitles = [
   'visitas'    => 'Visitas',
   'usuarios'   => 'Gerenciar Usuários',
   'estoque'    => 'Estoque',
-  'encomendas' => 'Controle de Encomendas',
+  'encomendas' => 'Encomendas',
   'metas'      => 'Metas'
 ];
 $title = isset($pageTitles[$currentPage]) ? $pageTitles[$currentPage] : 'Admin';

@@ -5,7 +5,6 @@ require_once '../inc/conexao.php'; // Ajuste o caminho conforme sua estrutura
 // header.php já inicia sessão, faz verificação, etc.
 include 'header.php';
 
-
 // Verifica se o usuário possui nível de acesso 2 (administrativo)
 if (!isset($_SESSION['nivel_acesso']) || $_SESSION['nivel_acesso'] != 2) {
     header("Location: login.php");
@@ -270,6 +269,11 @@ $encomendas = $stmt->fetchAll();
     .hidden-form {
       display: none;
     }
+    /* Torna a tabela responsiva em telas pequenas */
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+    }
   </style>
 </head>
 <body>
@@ -344,53 +348,56 @@ $encomendas = $stmt->fetchAll();
     
     <!-- Tabela de Encomendas -->
     <h2>Lista de Encomendas</h2>
-    <table class="table table-striped table-bordered">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>Descrição</th>
-                <th>Data Prevista</th>
-                <th>Status</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if ($encomendas): ?>
-                <?php foreach ($encomendas as $encomenda): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($encomenda['id']) ?></td>
-                        <td><?= htmlspecialchars($encomenda['nome']) ?></td>
-                        <td><?= htmlspecialchars($encomenda['descricao']) ?></td>
-                        <td><?= htmlspecialchars($encomenda['data_previsao']) ?></td>
-                        <td><?= htmlspecialchars($encomenda['status']) ?></td>
-                        <td>
-                            <!-- Botão Editar -->
-                            <a href="encomendas.php?action=edit&id=<?= $encomenda['id'] ?>" class="btn btn-success btn-sm">
-                                <i class="fas fa-edit"></i> Editar
-                            </a>
-                            <!-- Botão Apagar -->
-                            <a href="encomendas.php?action=delete&id=<?= $encomenda['id'] ?>" class="btn btn-danger btn-sm"
-                               onclick="return confirm('Deseja realmente apagar esta encomenda?');">
-                                <i class="fas fa-trash"></i> Apagar
-                            </a>
-                            <!-- Botão Marcar como Entregue (se estiver pendente) -->
-                            <?php if ($encomenda['status'] === 'Pendente'): ?>
-                                <a href="encomendas.php?action=entregar&id=<?= $encomenda['id'] ?>" class="btn btn-info btn-sm"
-                                   onclick="return confirm('Marcar esta encomenda como entregue?');">
-                                    <i class="fas fa-check-circle"></i> Entregue
-                                </a>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <tr>
-                    <td colspan="6">Nenhuma encomenda cadastrada.</td>
-                </tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
+    <!-- .table-responsive envolve a tabela -->
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered">
+          <thead>
+              <tr>
+                  <th>ID</th>
+                  <th>Nome</th>
+                  <th>Descrição</th>
+                  <th>Data Prevista</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+              </tr>
+          </thead>
+          <tbody>
+              <?php if ($encomendas): ?>
+                  <?php foreach ($encomendas as $encomenda): ?>
+                      <tr>
+                          <td><?= htmlspecialchars($encomenda['id']) ?></td>
+                          <td><?= htmlspecialchars($encomenda['nome']) ?></td>
+                          <td><?= htmlspecialchars($encomenda['descricao']) ?></td>
+                          <td><?= htmlspecialchars($encomenda['data_previsao']) ?></td>
+                          <td><?= htmlspecialchars($encomenda['status']) ?></td>
+                          <td>
+                              <!-- Botão Editar -->
+                              <a href="encomendas.php?action=edit&id=<?= $encomenda['id'] ?>" class="btn btn-success btn-sm">
+                                  <i class="fas fa-edit"></i> Editar
+                              </a>
+                              <!-- Botão Apagar -->
+                              <a href="encomendas.php?action=delete&id=<?= $encomenda['id'] ?>" class="btn btn-danger btn-sm"
+                                 onclick="return confirm('Deseja realmente apagar esta encomenda?');">
+                                  <i class="fas fa-trash"></i> Apagar
+                              </a>
+                              <!-- Botão Marcar como Entregue (se estiver pendente) -->
+                              <?php if ($encomenda['status'] === 'Pendente'): ?>
+                                  <a href="encomendas.php?action=entregar&id=<?= $encomenda['id'] ?>" class="btn btn-info btn-sm"
+                                     onclick="return confirm('Marcar esta encomenda como entregue?');">
+                                      <i class="fas fa-check-circle"></i> Entregue
+                                  </a>
+                              <?php endif; ?>
+                          </td>
+                      </tr>
+                  <?php endforeach; ?>
+              <?php else: ?>
+                  <tr>
+                      <td colspan="6">Nenhuma encomenda cadastrada.</td>
+                  </tr>
+              <?php endif; ?>
+          </tbody>
+      </table>
+    </div><!-- /.table-responsive -->
     
 </div><!-- /.container -->
 
