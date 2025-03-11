@@ -1,21 +1,72 @@
 /* ===============================
-   CONFIGURAÇÕES GERAIS
+   RESET E VARIÁVEIS GLOBAIS
    =============================== */
-   body {
-    background-color: #001f3f; /* Fundo azul escuro */
-    color: #f8f9fa;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+   * {
     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  :root {
+    /* Cores principais */
+    --bg-body: #001f3f;            /* Fundo da página */
+    --bg-container: #00274d;       /* Fundo do container */
+    --bg-card: #003366;            /* Fundo dos cards */
+    --border-card: #0056b3;        /* Borda dos cards e headings */
+    --bg-card-header: #0056b3;     /* Fundo do cabeçalho dos cards */
+    --alert-bg: #0056b3;           /* Fundo dos alertas */
+  
+    /* Texto e inputs */
+    --text-light: #f8f9fa;         /* Texto claro */
+    --text-dark: #000000;          /* Texto escuro (inputs) */
+    --input-border: #ccc;          /* Borda padrão dos inputs */
+    --input-focus: #66afe9;        /* Cor de foco nos inputs */
+  
+    /* Botões */
+    --primary-btn: #28a745;        /* Botão primário */
+    --primary-btn-hover: #218838;  /* Hover do botão primário */
+    --secondary-btn: #6c757d;      /* Botão secundário */
+    --secondary-btn-hover: #5a6268;/* Hover do botão secundário */
+  }
+  
+  /* ===============================
+     ESTILO GLOBAL
+     =============================== */
+  body {
+    background-color: var(--bg-body);
+    color: var(--text-light);
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    line-height: 1.6;
     padding: 20px;
   }
   
   /* ===============================
-     CONTAINER DA PÁGINA
+     CABEÇALHO COM LOGO
+     =============================== */
+  header.page-header {
+    background-color: var(--bg-container);
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  
+  header.page-header .logo {
+    max-height: 50px;
+    margin: 0;
+  }
+  
+  /* ===============================
+     CONTAINER PRINCIPAL
      =============================== */
   .container {
-    max-width: 800px;
+    /* Ajuste a largura máxima conforme preferir (900px, 1000px etc.) */
+    max-width: 900px;
     margin: 0 auto;
-    background-color: #00274d; /* Fundo dos cards e container */
+    background-color: var(--bg-container);
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.3);
@@ -26,34 +77,58 @@
      =============================== */
   h1 {
     text-align: center;
-    margin-bottom: 30px;
     font-size: 2rem;
-    color: #f8f9fa;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: var(--text-light);
   }
   
   /* ===============================
-     CARDS DE EDIÇÃO DOS CONTÉUDOS
+     ALERTAS (SUCESSO, ERRO, ETC.)
+     =============================== */
+  .alert {
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    background-color: var(--alert-bg);
+    color: var(--text-light);
+    border: none;
+  }
+  
+  /* ===============================
+     CARDS
      =============================== */
   .card {
-    background-color: #00274d;
-    border: 1px solid #0056b3;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-card);
     border-radius: 4px;
-    margin-bottom: 20px;
-    padding: 15px;
+    margin-bottom: 25px; /* Espaço entre cards */
+    padding: 20px;       /* Espaço interno */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
   }
   
   .card-header {
-    background-color: #0056b3;
-    padding: 10px;
+    background-color: var(--bg-card-header);
+    color: var(--text-light);
     font-size: 1.2rem;
     font-weight: bold;
-    color: #f8f9fa;
+    padding: 15px;
     border-radius: 4px 4px 0 0;
-    margin-bottom: 10px;
+    margin: -20px -20px 10px -20px; /* Ajuste para "unir" header e card body */
   }
   
+  /* Opcional: Se preferir, retire as margens negativas e defina padding individual */
+  
+  /* ===============================
+     CONTEÚDO DOS CARDS
+     =============================== */
   .card-body {
-    padding: 10px;
+    padding: 10px 0; /* Espaço vertical dentro do body */
   }
   
   /* ===============================
@@ -64,67 +139,80 @@
   }
   
   label {
+    display: block;
     font-weight: bold;
     margin-bottom: 5px;
-    display: block;
-    color: #f8f9fa;
+    color: var(--text-light);
   }
   
   .form-control {
+    width: 100%;
     background-color: #fff;
-    color: #000;
-    border: 1px solid #ccc;
+    color: var(--text-dark);
+    border: 1px solid var(--input-border);
     border-radius: 4px;
-    padding: 8px;
+    padding: 10px;
     font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 10px;
   }
   
   .form-control:focus {
-    border-color: #0056b3;
-    box-shadow: 0 0 0 2px rgba(0,86,179,0.25);
+    border-color: var(--input-focus);
+    box-shadow: 0 0 5px rgba(102,175,233,0.5);
+    outline: none;
+  }
+  
+  /* Tamanho mínimo para textareas, se quiser */
+  .form-control[rows] {
+    min-height: 100px; 
   }
   
   /* ===============================
      BOTÕES
      =============================== */
-  .btn-primary {
-    background-color: #28a745;
-    border: none;
-    padding: 10px 20px;
+  .btn {
     font-size: 1rem;
+    font-weight: 500;
     border-radius: 4px;
+    padding: 10px 20px;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.3s ease, transform 0.3s ease;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+  }
+  
+  .btn-primary {
+    background-color: var(--primary-btn);
+    color: #fff;
+    border: none;
     margin-right: 10px;
   }
   
   .btn-primary:hover {
-    background-color: #218838;
+    background-color: var(--primary-btn-hover);
+    transform: scale(1.02);
   }
   
   .btn-secondary {
-    background-color: #6c757d;
+    background-color: var(--secondary-btn);
+    color: #fff;
     border: none;
-    padding: 10px 20px;
-    font-size: 1rem;
-    border-radius: 4px;
-    color: #f8f9fa;
-    text-decoration: none;
-    display: inline-block;
     margin-top: 10px;
   }
   
   .btn-secondary:hover {
-    background-color: #5a6268;
+    background-color: var(--secondary-btn-hover);
+    transform: scale(1.02);
   }
   
   /* ===============================
-     ALERTAS
+     ALINHAMENTO DOS BOTÕES (BOOTSTRAP)
      =============================== */
-  .alert {
-    padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 4px;
+  /* Se estiver usando classes Bootstrap, isso já é automático;
+     mas caso queira garantir margens personalizadas: */
+  .d-flex {
+    margin-top: 20px; /* Espaço extra antes dos botões */
   }
   
   /* ===============================
@@ -137,6 +225,7 @@
     h1 {
       font-size: 1.75rem;
     }
+    /* Botões em full width no mobile */
     .btn-primary, .btn-secondary {
       width: 100%;
       text-align: center;

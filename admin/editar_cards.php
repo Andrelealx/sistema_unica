@@ -38,10 +38,15 @@ $cards = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <!-- Bootstrap CSS e Font Awesome -->
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-  <!-- Seu CSS customizado para essa página -->
+  <!-- CSS Customizado para essa página -->
   <link rel="stylesheet" href="../assets/css/editar_cards.css">
 </head>
 <body>
+  <!-- Cabeçalho com o logo da empresa -->
+  <header class="page-header">
+    <img src="../assets/img/logo.png" alt="Logo da Empresa" class="logo">
+  </header>
+  
   <div class="container mt-4">
     <h1 class="mb-4">Editar Cards do Dashboard</h1>
     
@@ -60,17 +65,28 @@ $cards = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="card-body">
           <div class="form-group">
             <label for="card_title_<?php echo $card['id']; ?>">Título:</label>
-            <input type="text" name="cards[<?php echo $card['id']; ?>][card_title]" id="card_title_<?php echo $card['id']; ?>" class="form-control" value="<?php echo htmlspecialchars($card['card_title']); ?>" required>
+            <input type="text" name="cards[<?php echo $card['id']; ?>][card_title]" 
+                   id="card_title_<?php echo $card['id']; ?>" 
+                   class="form-control" 
+                   value="<?php echo htmlspecialchars($card['card_title']); ?>" 
+                   required>
           </div>
           <div class="form-group">
             <label for="card_text_<?php echo $card['id']; ?>">Texto:</label>
-            <textarea name="cards[<?php echo $card['id']; ?>][card_text]" id="card_text_<?php echo $card['id']; ?>" class="form-control" rows="4" required><?php echo htmlspecialchars($card['card_text']); ?></textarea>
+            <textarea name="cards[<?php echo $card['id']; ?>][card_text]" 
+                      id="card_text_<?php echo $card['id']; ?>" 
+                      class="form-control" 
+                      rows="4" 
+                      required><?php echo htmlspecialchars($card['card_text']); ?></textarea>
           </div>
         </div>
       </div>
       <?php endforeach; ?>
-      <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-      <a href="Dashboard.php" class="btn btn-secondary">Voltar</a>
+      
+      <div class="d-flex justify-content-start align-items-center mt-3">
+        <button type="submit" class="btn btn-primary mr-2">Salvar Alterações</button>
+        <a href="../admin/dashboard.php" class="btn btn-secondary">Voltar</a>
+      </div>
     </form>
   </div>
   
