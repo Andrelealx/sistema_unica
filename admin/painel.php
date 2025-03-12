@@ -59,13 +59,36 @@ $tickets = $stmt->fetchAll();
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Painel Administrativo - Unica Serviços</title>
-
+  
+  <!-- Manifest para PWA -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#00bfff">
+  
   <!-- Bootstrap CSS e Font Awesome -->
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-
-  <!-- Estilos CSS -->
+  
+  <!-- Estilos CSS Personalizados -->
   <style>
+    /* Ajuste da tabela para usar azul Capri */
+    .table {
+      background-color: #00bfff;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    
+    /* Regra para o cabeçalho da tabela */
+    .thead-dark {
+      background-color: #00bfff !important;
+    }
+    .thead-dark th {
+      color: #fff !important;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    
     /* Seção expansível de detalhes/edição */
     .details-section {
       background: linear-gradient(135deg, #ffffff 0%, #f9fbfc 100%);
@@ -136,7 +159,6 @@ $tickets = $stmt->fetchAll();
       font-size: 16px;
       cursor: pointer;
     }
-    /* (Os demais estilos permanecem conforme seu código original) */
     .ticket-descricao {
       font-size: 14px;
       line-height: 1.7;
@@ -242,7 +264,7 @@ $tickets = $stmt->fetchAll();
       margin: 15px 0;
       opacity: 0.7;
     }
-    /* Filtros de busca - mantidos como estavam */
+    /* Filtros de busca */
     .search-bar .form-group {
       margin-bottom: 10px;
     }
@@ -310,9 +332,23 @@ $tickets = $stmt->fetchAll();
       }
     }
   </style>
-
+  
   <!-- CSS Customizado externo (opcional) -->
   <link rel="stylesheet" href="../assets/css/admin-estilos.css">
+  
+  <!-- Registro do Service Worker para PWA -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(function(registration) {
+            console.log('Service Worker registrado com sucesso, escopo:', registration.scope);
+          }, function(err) {
+            console.log('Falha no registro do Service Worker:', err);
+          });
+      });
+    }
+  </script>
 </head>
 <body>
   <!-- Área de Filtros e Busca (mantida como antes) -->
@@ -322,10 +358,10 @@ $tickets = $stmt->fetchAll();
         <label for="status" class="mr-2">Status:</label>
         <select name="status" id="status" class="form-control">
           <option value="">Todos</option>
-          <option value="Aberto"       <?php if($statusFiltro=='Aberto')       echo 'selected'; ?>>Aberto</option>
+          <option value="Aberto" <?php if($statusFiltro=='Aberto') echo 'selected'; ?>>Aberto</option>
           <option value="Em Andamento" <?php if($statusFiltro=='Em Andamento') echo 'selected'; ?>>Em Andamento</option>
-          <option value="Resolvido"    <?php if($statusFiltro=='Resolvido')    echo 'selected'; ?>>Resolvido</option>
-          <option value="Cancelado"    <?php if($statusFiltro=='Cancelado')    echo 'selected'; ?>>Cancelado</option>
+          <option value="Resolvido" <?php if($statusFiltro=='Resolvido') echo 'selected'; ?>>Resolvido</option>
+          <option value="Cancelado" <?php if($statusFiltro=='Cancelado') echo 'selected'; ?>>Cancelado</option>
         </select>
       </div>
       <div class="form-group mr-2 mb-2">
@@ -337,9 +373,9 @@ $tickets = $stmt->fetchAll();
         <label for="urgencia" class="mr-2">Urgência:</label>
         <select name="urgencia" id="urgencia" class="form-control">
           <option value="">Todos</option>
-          <option value="Baixo"   <?php if($urgenciaFiltro=='Baixo')   echo 'selected'; ?>>Baixo</option>
-          <option value="Médio"   <?php if($urgenciaFiltro=='Médio')   echo 'selected'; ?>>Médio</option>
-          <option value="Alto"    <?php if($urgenciaFiltro=='Alto')    echo 'selected'; ?>>Alto</option>
+          <option value="Baixo" <?php if($urgenciaFiltro=='Baixo') echo 'selected'; ?>>Baixo</option>
+          <option value="Médio" <?php if($urgenciaFiltro=='Médio') echo 'selected'; ?>>Médio</option>
+          <option value="Alto" <?php if($urgenciaFiltro=='Alto') echo 'selected'; ?>>Alto</option>
           <option value="Crítico" <?php if($urgenciaFiltro=='Crítico') echo 'selected'; ?>>Crítico</option>
         </select>
       </div>
@@ -374,252 +410,256 @@ $tickets = $stmt->fetchAll();
           <i class="fas fa-sync-alt"></i> Atualizar
         </button>                                                           
     </h2>
-      </div>
+  </div>
     
-    <?php if (isset($_SESSION['sucesso'])): ?>
-      <div class="alert alert-success alert-dismissible fade show" role="alert">
-          <?php echo $_SESSION['sucesso']; unset($_SESSION['sucesso']); ?>
-          <button type="button" class="close" data-dismiss="alert" aria-label="Fechar">
-              <span aria-hidden="true">×</span>
-          </button>
-      </div>
-    <?php endif; ?>
-    <?php if (isset($_SESSION['error'])): ?>
-      <div class="alert alert-danger alert-dismissible fade show" role="alert">
-          <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
-          <button type="button" class="close" data-dismiss="alert" aria-label="Fechar">
-              <span aria-hidden="true">×</span>
-          </button>
-      </div>
-    <?php endif; ?>
+  <?php if (isset($_SESSION['sucesso'])): ?>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <?php echo $_SESSION['sucesso']; unset($_SESSION['sucesso']); ?>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Fechar">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+  <?php endif; ?>
+  <?php if (isset($_SESSION['error'])): ?>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Fechar">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+  <?php endif; ?>
     
-    <div class="table-responsive">
-      <table class="table table-striped table-bordered table-hover">
-        <thead class="thead-dark">
-          <tr>
-            <th>ID</th>
-            <th>Protocolo</th>
-            <th>Nome</th>
-            <th>Setor</th>
-            <th>Urgência</th>
-            <th>Status</th>
-            <th>Data de Criação</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php foreach ($tickets as $ticket): ?>
-          <tr>
-            <td><?php echo $ticket['id']; ?></td>
-            <td><?php echo htmlspecialchars($ticket['protocolo']); ?></td>
-            <td><?php echo htmlspecialchars($ticket['nome']); ?></td>
-            <td><?php echo htmlspecialchars($ticket['setor']); ?></td>
-            <td><?php echo htmlspecialchars($ticket['urgencia']); ?></td>
-            <td>
-              <?php
-                $status = $ticket['status'];
-                switch($status) {
-                  case 'Aberto':       $badge = 'badge badge-danger';   break;
-                  case 'Em Andamento': $badge = 'badge badge-warning';  break;
-                  case 'Resolvido':    $badge = 'badge badge-success';  break;
-                  case 'Cancelado':    $badge = 'badge badge-secondary';break;
-                  default:             $badge = 'badge badge-light';    break;
-                }
-                echo "<span class=\"$badge\">$status</span>";
-              ?>
-            </td>
-            <td><?php echo date('d/m/Y H:i:s', strtotime($ticket['data_criacao'])); ?></td>
-            <td>
-              <button class="btn btn-sm btn-info toggle-details" data-target="details<?php echo $ticket['id']; ?>">
-                <i class="fas fa-eye"></i> Detalhes
-              </button>
-              <button class="btn btn-sm btn-warning toggle-edit" data-target="editDetails<?php echo $ticket['id']; ?>">
-                <i class="fas fa-edit"></i> Editar
-              </button>
-            </td>
-          </tr>
+  <div class="table-responsive">
+    <table class="table table-striped table-bordered table-hover">
+      <thead class="thead-dark">
+        <thead>
+  <tr style="background-color: #00bfff; color: #fff;">
+    <th>ID</th>
+    <th>Protocolo</th>
+    <th>Nome</th>
+    <th>Setor</th>
+    <th>Urgência</th>
+    <th>Status</th>
+    <th>Prévia da Descrição</th>
+    <th>Data de Criação</th>
+    <th>Ações</th>
+  </tr>
+</thead>
 
-          <!-- Seção Expansível de Detalhes -->
-          <tr class="details-row">
-            <td colspan="8">
-              <div class="details-section" id="details<?php echo $ticket['id']; ?>">
-                <div class="details-header">
-                  <span>Detalhes do Chamado #<?php echo $ticket['id']; ?></span>
-                  <div class="d-flex align-items-center">
-                    <div class="details-flex mr-2">
-                      <span><i class="fas fa-clock"></i> <?php echo date('d/m/Y H:i', strtotime($ticket['data_criacao'])); ?></span>
-                      <span><i class="fas fa-info-circle"></i> Informações extras</span>
-                    </div>
-                    <button class="close-details btn btn-sm btn-outline-secondary">
-                      <i class="fas fa-times"></i> Fechar
-                    </button>
+      </thead>
+      <tbody>
+        <?php foreach ($tickets as $ticket): ?>
+        <tr>
+          <td><?php echo $ticket['id']; ?></td>
+          <td><?php echo htmlspecialchars($ticket['protocolo']); ?></td>
+          <td><?php echo htmlspecialchars($ticket['nome']); ?></td>
+          <td><?php echo htmlspecialchars($ticket['setor']); ?></td>
+          <td><?php echo htmlspecialchars($ticket['urgencia']); ?></td>
+          <td>
+            <?php
+              $status = $ticket['status'];
+              switch($status) {
+                case 'Aberto':       $badge = 'badge badge-danger'; break;
+                case 'Em Andamento': $badge = 'badge badge-warning'; break;
+                case 'Resolvido':    $badge = 'badge badge-success'; break;
+                case 'Cancelado':    $badge = 'badge badge-secondary'; break;
+                default:             $badge = 'badge badge-light'; break;
+              }
+              echo "<span class=\"$badge\">$status</span>";
+            ?>
+          </td>
+          <td>
+            <?php 
+              echo mb_strimwidth(htmlspecialchars($ticket['descricao']), 0, 50, '...');
+            ?>
+          </td>
+          <td><?php echo date('d/m/Y H:i:s', strtotime($ticket['data_criacao'])); ?></td>
+          <td>
+            <button class="btn btn-sm btn-info toggle-details" data-target="details<?php echo $ticket['id']; ?>">
+              <i class="fas fa-eye"></i> Detalhes
+            </button>
+            <button class="btn btn-sm btn-warning toggle-edit" data-target="editDetails<?php echo $ticket['id']; ?>">
+              <i class="fas fa-edit"></i> Editar
+            </button>
+          </td>
+        </tr>
+
+        <!-- Seção Expansível de Detalhes -->
+        <tr class="details-row">
+          <td colspan="9">
+            <div class="details-section" id="details<?php echo $ticket['id']; ?>">
+              <div class="details-header">
+                <span>Detalhes do Chamado #<?php echo $ticket['id']; ?></span>
+                <div class="d-flex align-items-center">
+                  <div class="details-flex mr-2">
+                    <span><i class="fas fa-clock"></i> <?php echo date('d/m/Y H:i', strtotime($ticket['data_criacao'])); ?></span>
+                    <span><i class="fas fa-info-circle"></i> Informações extras</span>
                   </div>
-                </div>
-                <!-- Descrição -->
-                <h6><i class="fas fa-info-circle"></i> Descrição</h6>
-                <p class="ticket-descricao"><?php echo nl2br(htmlspecialchars($ticket['descricao'])); ?></p>
-                <!-- Anexo -->
-                <?php if (!empty($ticket['anexo'])): ?>
-                  <h6><i class="fas fa-paperclip"></i> Anexo</h6>
-                  <p>
-                    <a href="../<?php echo $ticket['anexo']; ?>" target="_blank" class="btn btn-sm btn-outline-primary btn-action">
-                      <i class="fas fa-download"></i> Ver/Download
-                    </a>
-                    <?php 
-                      $ext = strtolower(pathinfo($ticket['anexo'], PATHINFO_EXTENSION));
-                      $img_ext = ['jpg', 'jpeg', 'png', 'gif'];
-                      if (in_array($ext, $img_ext)):
-                    ?>
-                    <br>
-                    <img src="../<?php echo $ticket['anexo']; ?>" alt="Anexo" class="img-fluid mt-2 ticket-anexo">
-                    <?php endif; ?>
-                  </p>
-                <?php endif; ?>
-
-                <hr>
-
-                <!-- Comentários -->
-                <div class="comentarios-section">
-                  <h6><i class="fas fa-comments"></i> Comentários</h6>
-                  <div class="comentarios-list">
-                    <?php
-                      $stmtComent = $pdo->prepare("
-                        SELECT th.*, u.nome AS nome_usuario
-                        FROM ticket_historico th
-                        JOIN usuarios u ON th.usuario_id = u.id
-                        WHERE th.ticket_id = ?
-                        ORDER BY th.data DESC
-                      ");
-                      $stmtComent->execute([$ticket['id']]);
-                      $comentarios = $stmtComent->fetchAll();
-                      
-                      if (count($comentarios) > 0):
-                        foreach ($comentarios as $comentario):
-                          $date = new DateTime($comentario['data'], new DateTimeZone('UTC'));
-                          $date->setTimezone(new DateTimeZone('America/Sao_Paulo'));
-                    ?>
-                    <div class="comentario">
-                      <div class="comentario-header">
-                        <span class="comentario-author"><?php echo htmlspecialchars($comentario['nome_usuario']); ?></span>
-                        <span class="comentario-date"><?php echo $date->format('d/m/Y H:i:s'); ?></span>
-                      </div>
-                      <div class="comentario-body"><?php echo nl2br(htmlspecialchars($comentario['mensagem'])); ?></div>
-                    </div>
-                    <?php
-                        endforeach;
-                      else:
-                    ?>
-                    <p class="comentarios-empty">Sem comentários.</p>
-                    <?php endif; ?>
-                  </div>
-
-                  <!-- Formulário de Comentário -->
-                  <div class="comentario-form mt-3">
-                    <h6><i class="fas fa-comment-dots"></i> Adicionar Comentário</h6>
-                    <form action="adicionar_comentario.php" method="POST">
-                      <input type="hidden" name="ticket_id" value="<?php echo $ticket['id']; ?>">
-                      <textarea name="mensagem" class="form-control ticket-comentario-textarea" placeholder="Digite seu comentário" required></textarea>
-                      <button type="submit" class="btn btn-primary btn-action mt-2">
-                        <i class="fas fa-plus-circle"></i> Adicionar
-                      </button>
-                    </form>
-                  </div>
-                </div>
-
-                <hr>
-
-                <!-- Atualizar Status -->
-                <h6><i class="fas fa-sync-alt"></i> Atualizar Status</h6>
-                <form action="atualizar_status.php" method="POST" class="form-group d-flex align-items-center">
-                  <input type="hidden" name="ticket_id" value="<?php echo $ticket['id']; ?>">
-                  <select name="status" id="status<?php echo $ticket['id']; ?>" class="form-control mr-2" style="width: auto;">
-                    <option value="Aberto"       <?php echo ($ticket['status'] == 'Aberto')       ? 'selected' : ''; ?>>Aberto</option>
-                    <option value="Em Andamento" <?php echo ($ticket['status'] == 'Em Andamento') ? 'selected' : ''; ?>>Em Andamento</option>
-                    <option value="Resolvido"    <?php echo ($ticket['status'] == 'Resolvido')    ? 'selected' : ''; ?>>Resolvido</option>
-                    <option value="Cancelado"    <?php echo ($ticket['status'] == 'Cancelado')    ? 'selected' : ''; ?>>Cancelado</option>
-                  </select>
-                  <button type="submit" class="btn btn-success btn-action">
-                    <i class="fas fa-save"></i> Salvar
-                  </button>
-                </form>
-
-                <hr>
-
-                <!-- Excluir Chamado -->
-                <h6><i class="fas fa-trash-alt"></i> Excluir Chamado</h6>
-                <form action="excluir_chamado.php" method="POST" 
-                      onsubmit="return confirm('Tem certeza que deseja excluir esse chamado?');">
-                  <input type="hidden" name="ticket_id" value="<?php echo $ticket['id']; ?>">
-                  <button type="submit" class="btn btn-danger btn-action">
-                    <i class="fas fa-trash"></i> Excluir
-                  </button>
-                </form>
-              </div>
-            </td>
-          </tr>
-
-          <!-- Seção de Edição Expansível -->
-          <tr class="edit-row">
-            <td colspan="8">
-              <div class="details-section" id="editDetails<?php echo $ticket['id']; ?>">
-                <div class="details-header d-flex justify-content-between align-items-center">
-                  <span>Editar Chamado #<?php echo $ticket['id']; ?></span>
                   <button class="close-details btn btn-sm btn-outline-secondary">
                     <i class="fas fa-times"></i> Fechar
                   </button>
                 </div>
-                <form action="editar_chamados.php" method="POST">
-                  <input type="hidden" name="ticket_id" value="<?php echo $ticket['id']; ?>">
-                  <div class="form-row">
-                    <div class="form-group col-md-6">
-                      <label for="nome<?php echo $ticket['id']; ?>">Nome</label>
-                      <input type="text" class="form-control" id="nome<?php echo $ticket['id']; ?>" 
-                             name="nome" value="<?php echo htmlspecialchars($ticket['nome']); ?>" required>
-                    </div>
-                    <div class="form-group col-md-6">
-                      <label for="setor<?php echo $ticket['id']; ?>">Setor</label>
-                      <input type="text" class="form-control" id="setor<?php echo $ticket['id']; ?>" 
-                             name="setor" value="<?php echo htmlspecialchars($ticket['setor']); ?>" required>
-                    </div>
-                  </div>
-                  <div class="form-row">
-                    <div class="form-group col-md-6">
-                      <label for="urgencia<?php echo $ticket['id']; ?>">Urgência</label>
-                      <select class="form-control" id="urgencia<?php echo $ticket['id']; ?>" name="urgencia" required>
-                        <option value="Baixo"   <?php if($ticket['urgencia']=='Baixo')   echo 'selected'; ?>>Baixo</option>
-                        <option value="Médio"   <?php if($ticket['urgencia']=='Médio')   echo 'selected'; ?>>Médio</option>
-                        <option value="Alto"    <?php if($ticket['urgencia']=='Alto')    echo 'selected'; ?>>Alto</option>
-                        <option value="Crítico" <?php if($ticket['urgencia']=='Crítico') echo 'selected'; ?>>Crítico</option>
-                      </select>
-                    </div>
-                    <div class="form-group col-md-6">
-                      <label for="status<?php echo $ticket['id']; ?>">Status</label>
-                      <select class="form-control" id="status<?php echo $ticket['id']; ?>" name="status" required>
-                        <option value="Aberto"       <?php if($ticket['status']=='Aberto')       echo 'selected'; ?>>Aberto</option>
-                        <option value="Em Andamento" <?php if($ticket['status']=='Em Andamento') echo 'selected'; ?>>Em Andamento</option>
-                        <option value="Resolvido"    <?php if($ticket['status']=='Resolvido')    echo 'selected'; ?>>Resolvido</option>
-                        <option value="Cancelado"    <?php if($ticket['status']=='Cancelado')    echo 'selected'; ?>>Cancelado</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="form-row">
-                    <div class="form-group col-12">
-                      <label for="descricao<?php echo $ticket['id']; ?>">Descrição</label>
-                      <textarea class="form-control" id="descricao<?php echo $ticket['id']; ?>" 
-                                name="descricao" rows="3" required><?php echo htmlspecialchars($ticket['descricao']); ?></textarea>
-                    </div>
-                  </div>
-                  <button type="submit" class="btn btn-primary btn-action">
-                    <i class="fas fa-save"></i> Salvar Alterações
-                  </button>
-                </form>
               </div>
-            </td>
-          </tr>
-          <?php endforeach; ?>
-        </tbody>
-      </table>
-    </div>
+              <!-- Descrição -->
+              <h6><i class="fas fa-info-circle"></i> Descrição</h6>
+              <p class="ticket-descricao"><?php echo nl2br(htmlspecialchars($ticket['descricao'])); ?></p>
+              <!-- Anexo -->
+              <?php if (!empty($ticket['anexo'])): ?>
+                <h6><i class="fas fa-paperclip"></i> Anexo</h6>
+                <p>
+                  <a href="../<?php echo $ticket['anexo']; ?>" target="_blank" class="btn btn-sm btn-outline-primary btn-action">
+                    <i class="fas fa-download"></i> Ver/Download
+                  </a>
+                  <?php 
+                    $ext = strtolower(pathinfo($ticket['anexo'], PATHINFO_EXTENSION));
+                    $img_ext = ['jpg', 'jpeg', 'png', 'gif'];
+                    if (in_array($ext, $img_ext)):
+                  ?>
+                  <br>
+                  <img src="../<?php echo $ticket['anexo']; ?>" alt="Anexo" class="img-fluid mt-2 ticket-anexo">
+                  <?php endif; ?>
+                </p>
+              <?php endif; ?>
+
+              <hr>
+
+              <!-- Comentários -->
+              <div class="comentarios-section">
+                <h6><i class="fas fa-comments"></i> Comentários</h6>
+                <div class="comentarios-list">
+                  <?php
+                    $stmtComent = $pdo->prepare("
+                      SELECT th.*, u.nome AS nome_usuario
+                      FROM ticket_historico th
+                      JOIN usuarios u ON th.usuario_id = u.id
+                      WHERE th.ticket_id = ?
+                      ORDER BY th.data DESC
+                    ");
+                    $stmtComent->execute([$ticket['id']]);
+                    $comentarios = $stmtComent->fetchAll();
+                    
+                    if (count($comentarios) > 0):
+                      foreach ($comentarios as $comentario):
+                        $date = new DateTime($comentario['data'], new DateTimeZone('UTC'));
+                        $date->setTimezone(new DateTimeZone('America/Sao_Paulo'));
+                  ?>
+                  <div class="comentario">
+                    <div class="comentario-header">
+                      <span class="comentario-author"><?php echo htmlspecialchars($comentario['nome_usuario']); ?></span>
+                      <span class="comentario-date"><?php echo $date->format('d/m/Y H:i:s'); ?></span>
+                    </div>
+                    <div class="comentario-body"><?php echo nl2br(htmlspecialchars($comentario['mensagem'])); ?></div>
+                  </div>
+                  <?php
+                      endforeach;
+                    else:
+                  ?>
+                  <p class="comentarios-empty">Sem comentários.</p>
+                  <?php endif; ?>
+                </div>
+
+                <!-- Formulário de Comentário -->
+                <div class="comentario-form mt-3">
+                  <h6><i class="fas fa-comment-dots"></i> Adicionar Comentário</h6>
+                  <form action="adicionar_comentario.php" method="POST">
+                    <input type="hidden" name="ticket_id" value="<?php echo $ticket['id']; ?>">
+                    <textarea name="mensagem" class="form-control ticket-comentario-textarea" placeholder="Digite seu comentário" required></textarea>
+                    <button type="submit" class="btn btn-primary btn-action mt-2">
+                      <i class="fas fa-plus-circle"></i> Adicionar
+                    </button>
+                  </form>
+                </div>
+              </div>
+
+              <hr>
+
+              <!-- Atualizar Status -->
+              <h6><i class="fas fa-sync-alt"></i> Atualizar Status</h6>
+              <form action="atualizar_status.php" method="POST" class="form-group d-flex align-items-center">
+                <input type="hidden" name="ticket_id" value="<?php echo $ticket['id']; ?>">
+                <select name="status" id="status<?php echo $ticket['id']; ?>" class="form-control mr-2" style="width: auto;">
+                  <option value="Aberto" <?php echo ($ticket['status'] == 'Aberto') ? 'selected' : ''; ?>>Aberto</option>
+                  <option value="Em Andamento" <?php echo ($ticket['status'] == 'Em Andamento') ? 'selected' : ''; ?>>Em Andamento</option>
+                  <option value="Resolvido" <?php echo ($ticket['status'] == 'Resolvido') ? 'selected' : ''; ?>>Resolvido</option>
+                  <option value="Cancelado" <?php echo ($ticket['status'] == 'Cancelado') ? 'selected' : ''; ?>>Cancelado</option>
+                </select>
+                <button type="submit" class="btn btn-success btn-action">
+                  <i class="fas fa-save"></i> Salvar
+                </button>
+              </form>
+
+              <hr>
+
+              <!-- Excluir Chamado -->
+              <h6><i class="fas fa-trash-alt"></i> Excluir Chamado</h6>
+              <form action="excluir_chamado.php" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir esse chamado?');">
+                <input type="hidden" name="ticket_id" value="<?php echo $ticket['id']; ?>">
+                <button type="submit" class="btn btn-danger btn-action">
+                  <i class="fas fa-trash"></i> Excluir
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Seção de Edição Expansível -->
+        <tr class="edit-row">
+          <td colspan="9">
+            <div class="details-section" id="editDetails<?php echo $ticket['id']; ?>">
+              <div class="details-header d-flex justify-content-between align-items-center">
+                <span>Editar Chamado #<?php echo $ticket['id']; ?></span>
+                <button class="close-details btn btn-sm btn-outline-secondary">
+                  <i class="fas fa-times"></i> Fechar
+                </button>
+              </div>
+              <form action="editar_chamados.php" method="POST">
+                <input type="hidden" name="ticket_id" value="<?php echo $ticket['id']; ?>">
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <label for="nome<?php echo $ticket['id']; ?>">Nome</label>
+                    <input type="text" class="form-control" id="nome<?php echo $ticket['id']; ?>" name="nome" value="<?php echo htmlspecialchars($ticket['nome']); ?>" required>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="setor<?php echo $ticket['id']; ?>">Setor</label>
+                    <input type="text" class="form-control" id="setor<?php echo $ticket['id']; ?>" name="setor" value="<?php echo htmlspecialchars($ticket['setor']); ?>" required>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <label for="urgencia<?php echo $ticket['id']; ?>">Urgência</label>
+                    <select class="form-control" id="urgencia<?php echo $ticket['id']; ?>" name="urgencia" required>
+                      <option value="Baixo" <?php if($ticket['urgencia']=='Baixo') echo 'selected'; ?>>Baixo</option>
+                      <option value="Médio" <?php if($ticket['urgencia']=='Médio') echo 'selected'; ?>>Médio</option>
+                      <option value="Alto" <?php if($ticket['urgencia']=='Alto') echo 'selected'; ?>>Alto</option>
+                      <option value="Crítico" <?php if($ticket['urgencia']=='Crítico') echo 'selected'; ?>>Crítico</option>
+                    </select>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="status<?php echo $ticket['id']; ?>">Status</label>
+                    <select class="form-control" id="status<?php echo $ticket['id']; ?>" name="status" required>
+                      <option value="Aberto" <?php if($ticket['status']=='Aberto') echo 'selected'; ?>>Aberto</option>
+                      <option value="Em Andamento" <?php if($ticket['status']=='Em Andamento') echo 'selected'; ?>>Em Andamento</option>
+                      <option value="Resolvido" <?php if($ticket['status']=='Resolvido') echo 'selected'; ?>>Resolvido</option>
+                      <option value="Cancelado" <?php if($ticket['status']=='Cancelado') echo 'selected'; ?>>Cancelado</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-12">
+                    <label for="descricao<?php echo $ticket['id']; ?>">Descrição</label>
+                    <textarea class="form-control" id="descricao<?php echo $ticket['id']; ?>" name="descricao" rows="3" required><?php echo htmlspecialchars($ticket['descricao']); ?></textarea>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-action">
+                  <i class="fas fa-save"></i> Salvar Alterações
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
   </div>
   
   <!-- jQuery e Bootstrap JS -->
@@ -628,10 +668,8 @@ $tickets = $stmt->fetchAll();
   <!-- Script para controlar a exibição das seções -->
   <script>
     $(document).ready(function() {
-      // Oculta todas as seções de detalhes/edição inicialmente
       $('.details-section').hide();
-
-      // Toggle para a seção de detalhes
+      
       $('.toggle-details').click(function(e) {
         e.preventDefault();
         var targetId = $(this).data('target');
@@ -643,7 +681,6 @@ $tickets = $stmt->fetchAll();
         }
       });
       
-      // Toggle para a seção de edição
       $('.toggle-edit').click(function(e) {
         e.preventDefault();
         var targetId = $(this).data('target');
@@ -655,7 +692,6 @@ $tickets = $stmt->fetchAll();
         }
       });
       
-      // Botão "Fechar" para fechar a seção (detalhes ou edição)
       $(document).on('click', '.close-details', function(e) {
         e.preventDefault();
         var $section = $(this).closest('.details-section');
