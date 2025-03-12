@@ -1,53 +1,35 @@
 <?php
 session_start();
-require_once '../inc/conexao.php';  // Ajuste o caminho se precisar
+require_once '../inc/conexao.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Recebe os dados do formulário
-    $ticket_id = $_POST['ticket_id'] ?? 0;
-    $nome      = trim($_POST['nome'] ?? '');
-    $setor     = trim($_POST['setor'] ?? '');
-    $urgencia  = trim($_POST['urgencia'] ?? '');
-    $status    = trim($_POST['status'] ?? '');
-    $descricao = trim($_POST['descricao'] ?? '');
+    // Recebe e valida os dados
+    $ticket_id = isset($_POST['ticket_id']) ? intval($_POST['ticket_id']) : 0;
+    $nome = isset($_POST['nome']) ? trim($_POST['nome']) : '';
+    $setor = isset($_POST['setor']) ? trim($_POST['setor']) : '';
+    $urgencia = isset($_POST['urgencia']) ? trim($_POST['urgencia']) : '';
+    $status = isset($_POST['status']) ? trim($_POST['status']) : '';
+    $descricao = isset($_POST['descricao']) ? trim($_POST['descricao']) : '';
 
-    // Validações simples (exemplo)
-    if (empty($ticket_id) || empty($nome) || empty($setor) || empty($urgencia) || empty($status) || empty($descricao)) {
-        $_SESSION['error'] = "Preencha todos os campos obrigatórios para editar o chamado.";
+    if ($ticket_id <= 0 || empty($nome) || empty($setor) || empty($urgencia) || empty($status) || empty($descricao)) {
+        $_SESSION['error'] = "Por favor, preencha todos os campos obrigatórios.";
         header("Location: painel.php");
         exit;
     }
 
-    // Monta a query de UPDATE
-    $sql = "UPDATE tickets 
-               SET nome = ?, 
-                   setor = ?, 
-                   urgencia = ?, 
-                   status = ?, 
-                   descricao = ?
-             WHERE id = ?";
-    $stmt = $pdo->prepare($sql);
-    $ok = $stmt->execute([
-        $nome,
-        $setor,
-        $urgencia,
-        $status,
-        $descricao,
-        $ticket_id
-    ]);
+    // Atualiza o ticket no banco de dados
+    $stmt = $pdo->prepare("UPDATE tickets SET nome = ?, setor = ?, urgencia = ?, status = ?, descricao = ? WHERE id = ?");
+    $result = $stmt->execute([$nome, $setor, $urgencia, $status, $descricao, $ticket_id]);
 
-    // Verifica se deu certo
-    if ($ok) {
+    if ($result) {
         $_SESSION['sucesso'] = "Chamado atualizado com sucesso.";
     } else {
         $_SESSION['error'] = "Erro ao atualizar o chamado.";
     }
-
-    // Redireciona de volta para painel.php
     header("Location: painel.php");
     exit;
 } else {
-    // Se acessou sem ser via POST, redireciona
+    $_SESSION['error'] = "Ação inválida.";
     header("Location: painel.php");
     exit;
 }

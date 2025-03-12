@@ -66,9 +66,8 @@ $tickets = $stmt->fetchAll();
 
   <!-- Estilos CSS -->
   <style>
-    /* Estilo da seção expansível */
+    /* Seção expansível de detalhes/edição */
     .details-section {
-      display: none; /* Escondido por padrão */
       background: linear-gradient(135deg, #ffffff 0%, #f9fbfc 100%);
       padding: 20px;
       border: 1px solid #e0e4e8;
@@ -76,14 +75,17 @@ $tickets = $stmt->fetchAll();
       margin: 15px 0;
       box-shadow: 0 4px 12px rgba(0,0,0,0.08);
       width: 100%;
-      max-width: 700px; /* Largura um pouco maior, mas ainda limitada */
+      max-width: 700px;
       margin-left: auto;
       margin-right: auto;
-      transition: all 0.3s ease; /* Transição suave ao abrir/fechar */
+      transition: all 0.3s ease;
+      display: none; /* Oculto inicialmente */
     }
     .details-section.active {
-      display: block; /* Mostra quando ativo */
+      display: flex;
+      flex-direction: column;
     }
+    /* Cabeçalho com botão de fechar */
     .details-header {
       background-color: #007bff;
       color: #fff;
@@ -92,7 +94,24 @@ $tickets = $stmt->fetchAll();
       border-top-right-radius: 10px;
       font-size: 16px;
       font-weight: 600;
-      margin: -20px -20px 20px -20px; /* Integra ao topo da seção */
+      margin: -20px -20px 20px -20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    /* Flexbox para informações extras na área de detalhes */
+    .details-flex {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    @media (max-width: 576px) {
+      .details-flex {
+          flex-direction: column;
+          align-items: flex-start;
+      }
     }
     .details-section h6 {
       color: #1a3c6e;
@@ -109,6 +128,15 @@ $tickets = $stmt->fetchAll();
       color: #007bff;
       font-size: 18px;
     }
+    /* Botão Fechar */
+    .close-details {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    /* (Os demais estilos permanecem conforme seu código original) */
     .ticket-descricao {
       font-size: 14px;
       line-height: 1.7;
@@ -150,6 +178,7 @@ $tickets = $stmt->fetchAll();
       font-size: 12px;
       color: #6c757d;
       margin-bottom: 6px;
+      flex-wrap: wrap;
     }
     .comentario-author {
       font-weight: bold;
@@ -213,7 +242,7 @@ $tickets = $stmt->fetchAll();
       margin: 15px 0;
       opacity: 0.7;
     }
-    /* Estilos gerais da tabela e filtros */
+    /* Filtros de busca - mantidos como estavam */
     .search-bar .form-group {
       margin-bottom: 10px;
     }
@@ -221,9 +250,8 @@ $tickets = $stmt->fetchAll();
       vertical-align: middle;
     }
     .table .details-row td {
-      padding: 0; /* Remove padding da célula para a seção expansível */
+      padding: 0;
     }
-
     /* Media Queries para Mobile */
     @media (max-width: 576px) {
       .details-section {
@@ -287,7 +315,7 @@ $tickets = $stmt->fetchAll();
   <link rel="stylesheet" href="../assets/css/admin-estilos.css">
 </head>
 <body>
-  <!-- Área de Filtros e Busca -->
+  <!-- Área de Filtros e Busca (mantida como antes) -->
   <div class="container-fluid search-bar py-3">
     <form action="painel.php" method="GET" class="form-inline flex-wrap">
       <div class="form-group mr-2 mb-2">
@@ -340,7 +368,13 @@ $tickets = $stmt->fetchAll();
   
   <!-- Conteúdo Principal - Lista de Chamados -->
   <div class="container-fluid mt-4">
-    <h2 class="mb-4">Lista de Chamados</h2>
+    <h2 class="mb-4">Lista de Chamados
+        <span class="badge badge-info p-2">Última atualização: <?php echo date('d/m/Y H:i:s'); ?></span>
+        <button class="btn btn-sm btn-outline-secondary refresh-btn" onclick="location.reload();">
+          <i class="fas fa-sync-alt"></i> Atualizar
+        </button>                                                           
+    </h2>
+      </div>
     
     <?php if (isset($_SESSION['sucesso'])): ?>
       <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -399,9 +433,7 @@ $tickets = $stmt->fetchAll();
               <button class="btn btn-sm btn-info toggle-details" data-target="details<?php echo $ticket['id']; ?>">
                 <i class="fas fa-eye"></i> Detalhes
               </button>
-              <button class="btn btn-sm btn-warning" type="button" data-toggle="collapse" 
-                      data-target="#edit<?php echo $ticket['id']; ?>" aria-expanded="false" 
-                      aria-controls="edit<?php echo $ticket['id']; ?>">
+              <button class="btn btn-sm btn-warning toggle-edit" data-target="editDetails<?php echo $ticket['id']; ?>">
                 <i class="fas fa-edit"></i> Editar
               </button>
             </td>
@@ -411,11 +443,21 @@ $tickets = $stmt->fetchAll();
           <tr class="details-row">
             <td colspan="8">
               <div class="details-section" id="details<?php echo $ticket['id']; ?>">
-                <div class="details-header">Detalhes do Chamado #<?php echo $ticket['id']; ?></div>
+                <div class="details-header">
+                  <span>Detalhes do Chamado #<?php echo $ticket['id']; ?></span>
+                  <div class="d-flex align-items-center">
+                    <div class="details-flex mr-2">
+                      <span><i class="fas fa-clock"></i> <?php echo date('d/m/Y H:i', strtotime($ticket['data_criacao'])); ?></span>
+                      <span><i class="fas fa-info-circle"></i> Informações extras</span>
+                    </div>
+                    <button class="close-details btn btn-sm btn-outline-secondary">
+                      <i class="fas fa-times"></i> Fechar
+                    </button>
+                  </div>
+                </div>
                 <!-- Descrição -->
                 <h6><i class="fas fa-info-circle"></i> Descrição</h6>
                 <p class="ticket-descricao"><?php echo nl2br(htmlspecialchars($ticket['descricao'])); ?></p>
-
                 <!-- Anexo -->
                 <?php if (!empty($ticket['anexo'])): ?>
                   <h6><i class="fas fa-paperclip"></i> Anexo</h6>
@@ -517,13 +559,17 @@ $tickets = $stmt->fetchAll();
           </tr>
 
           <!-- Seção de Edição Expansível -->
-          <tr class="collapse" id="edit<?php echo $ticket['id']; ?>">
+          <tr class="edit-row">
             <td colspan="8">
-              <div class="details-section">
-                <div class="details-header">Editar Chamado #<?php echo $ticket['id']; ?></div>
+              <div class="details-section" id="editDetails<?php echo $ticket['id']; ?>">
+                <div class="details-header d-flex justify-content-between align-items-center">
+                  <span>Editar Chamado #<?php echo $ticket['id']; ?></span>
+                  <button class="close-details btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-times"></i> Fechar
+                  </button>
+                </div>
                 <form action="editar_chamados.php" method="POST">
                   <input type="hidden" name="ticket_id" value="<?php echo $ticket['id']; ?>">
-
                   <div class="form-row">
                     <div class="form-group col-md-6">
                       <label for="nome<?php echo $ticket['id']; ?>">Nome</label>
@@ -536,7 +582,6 @@ $tickets = $stmt->fetchAll();
                              name="setor" value="<?php echo htmlspecialchars($ticket['setor']); ?>" required>
                     </div>
                   </div>
-
                   <div class="form-row">
                     <div class="form-group col-md-6">
                       <label for="urgencia<?php echo $ticket['id']; ?>">Urgência</label>
@@ -557,7 +602,6 @@ $tickets = $stmt->fetchAll();
                       </select>
                     </div>
                   </div>
-
                   <div class="form-row">
                     <div class="form-group col-12">
                       <label for="descricao<?php echo $ticket['id']; ?>">Descrição</label>
@@ -565,7 +609,6 @@ $tickets = $stmt->fetchAll();
                                 name="descricao" rows="3" required><?php echo htmlspecialchars($ticket['descricao']); ?></textarea>
                     </div>
                   </div>
-
                   <button type="submit" class="btn btn-primary btn-action">
                     <i class="fas fa-save"></i> Salvar Alterações
                   </button>
@@ -582,20 +625,41 @@ $tickets = $stmt->fetchAll();
   <!-- jQuery e Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-  <!-- Script para controlar a exibição da seção expansível -->
+  <!-- Script para controlar a exibição das seções -->
   <script>
     $(document).ready(function() {
-      $('.toggle-details').click(function() {
+      // Oculta todas as seções de detalhes/edição inicialmente
+      $('.details-section').hide();
+
+      // Toggle para a seção de detalhes
+      $('.toggle-details').click(function(e) {
+        e.preventDefault();
         var targetId = $(this).data('target');
-        var $detailsSection = $('#' + targetId);
-        
-        // Alterna a visibilidade com transição suave
-        if ($detailsSection.hasClass('active')) {
-          $detailsSection.removeClass('active');
+        var $section = $('#' + targetId);
+        if ($section.is(':visible')) {
+          $section.slideUp(300, function() { $(this).removeClass('active'); });
         } else {
-          $('.details-section').removeClass('active');
-          $detailsSection.addClass('active');
+          $section.css('display', 'flex').hide().slideDown(300, function() { $(this).addClass('active'); });
         }
+      });
+      
+      // Toggle para a seção de edição
+      $('.toggle-edit').click(function(e) {
+        e.preventDefault();
+        var targetId = $(this).data('target');
+        var $section = $('#' + targetId);
+        if ($section.is(':visible')) {
+          $section.slideUp(300, function() { $(this).removeClass('active'); });
+        } else {
+          $section.css('display', 'flex').hide().slideDown(300, function() { $(this).addClass('active'); });
+        }
+      });
+      
+      // Botão "Fechar" para fechar a seção (detalhes ou edição)
+      $(document).on('click', '.close-details', function(e) {
+        e.preventDefault();
+        var $section = $(this).closest('.details-section');
+        $section.slideUp(300, function() { $(this).removeClass('active'); });
       });
     });
   </script>
