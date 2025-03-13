@@ -17,7 +17,47 @@ $dataIniFiltro  = isset($_GET['data_inicial']) ? $_GET['data_inicial'] : '';
 $dataFimFiltro  = isset($_GET['data_final']) ? $_GET['data_final'] : '';
 $busca          = isset($_GET['q']) ? trim($_GET['q']) : '';
 
-// Constrói a query dinamicamente com base nos filtros
+// Parâmetros para paginação
+$page    = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+$perPage = 10; // Número de chamados por página
+$offset  = ($page - 1) * $perPage;
+
+// Monta a query para contagem total (para paginação)
+$countQuery = "SELECT COUNT(*) FROM tickets WHERE 1=1";
+$paramsCount = [];
+
+if (!empty($statusFiltro)) {
+    $countQuery .= " AND status = ?";
+    $paramsCount[] = $statusFiltro;
+}
+if (!empty($setorFiltro)) {
+    $countQuery .= " AND setor LIKE ?";
+    $paramsCount[] = "%$setorFiltro%";
+}
+if (!empty($urgenciaFiltro)) {
+    $countQuery .= " AND urgencia = ?";
+    $paramsCount[] = $urgenciaFiltro;
+}
+if (!empty($dataIniFiltro)) {
+    $countQuery .= " AND data_criacao >= ?";
+    $paramsCount[] = $dataIniFiltro . " 00:00:00";
+}
+if (!empty($dataFimFiltro)) {
+    $countQuery .= " AND data_criacao <= ?";
+    $paramsCount[] = $dataFimFiltro . " 23:59:59";
+}
+if (!empty($busca)) {
+    $countQuery .= " AND (nome LIKE ? OR protocolo LIKE ?)";
+    $paramsCount[] = "%$busca%";
+    $paramsCount[] = "%$busca%";
+}
+
+$stmtCount = $pdo->prepare($countQuery);
+$stmtCount->execute($paramsCount);
+$totalTickets = $stmtCount->fetchColumn();
+$totalPages = ceil($totalTickets / $perPage);
+
+// Monta a query principal com os filtros e paginação
 $query = "SELECT * FROM tickets WHERE 1=1";
 $params = [];
 
@@ -47,7 +87,7 @@ if (!empty($busca)) {
     $params[] = "%$busca%";
 }
 
-$query .= " ORDER BY data_criacao DESC";
+$query .= " ORDER BY data_criacao DESC LIMIT $perPage OFFSET $offset";
 
 $stmt = $pdo->prepare($query);
 $stmt->execute($params);
@@ -59,34 +99,17 @@ $tickets = $stmt->fetchAll();
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Painel Administrativo - Unica Serviços</title>
-  
-  <!-- Manifest para PWA -->
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#00bfff">
-  
+
   <!-- Bootstrap CSS e Font Awesome -->
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-  
-  <!-- Estilos CSS Personalizados -->
+
+  <!-- Estilos CSS -->
   <style>
-    /* Ajuste da tabela para usar azul Capri */
-    .table {
-      background-color: #00bfff;
-      border-radius: 4px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      overflow: hidden;
-    }
-    
-    /* Regra para o cabeçalho da tabela */
-    .thead-dark {
-      background-color: #00bfff !important;
-    }
-    .thead-dark th {
-      color: #fff !important;
-      text-transform: uppercase;
-      font-weight: 600;
-      letter-spacing: 0.5px;
+    /* Alteração do cabeçalho da tabela para azul */
+    .thead-blue th {
+      background-color: #007bff;
+      color: #fff;
     }
     
     /* Seção expansível de detalhes/edição */
@@ -102,7 +125,7 @@ $tickets = $stmt->fetchAll();
       margin-left: auto;
       margin-right: auto;
       transition: all 0.3s ease;
-      display: none; /* Oculto inicialmente */
+      display: none;
     }
     .details-section.active {
       display: flex;
@@ -159,6 +182,7 @@ $tickets = $stmt->fetchAll();
       font-size: 16px;
       cursor: pointer;
     }
+    /* Outros estilos conforme o código original */
     .ticket-descricao {
       font-size: 14px;
       line-height: 1.7;
@@ -274,6 +298,29 @@ $tickets = $stmt->fetchAll();
     .table .details-row td {
       padding: 0;
     }
+    /* Estilos para paginação */
+    .pagination {
+      margin: 20px 0;
+      display: flex;
+      justify-content: center;
+      list-style: none;
+      padding: 0;
+    }
+    .pagination li {
+      margin: 0 5px;
+    }
+    .pagination li a {
+      color: #007bff;
+      text-decoration: none;
+      padding: 5px 10px;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+    }
+    .pagination li a.active,
+    .pagination li a:hover {
+      background-color: #007bff;
+      color: #fff;
+    }
     /* Media Queries para Mobile */
     @media (max-width: 576px) {
       .details-section {
@@ -332,36 +379,22 @@ $tickets = $stmt->fetchAll();
       }
     }
   </style>
-  
+
   <!-- CSS Customizado externo (opcional) -->
   <link rel="stylesheet" href="../assets/css/admin-estilos.css">
-  
-  <!-- Registro do Service Worker para PWA -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/service-worker.js')
-          .then(function(registration) {
-            console.log('Service Worker registrado com sucesso, escopo:', registration.scope);
-          }, function(err) {
-            console.log('Falha no registro do Service Worker:', err);
-          });
-      });
-    }
-  </script>
 </head>
 <body>
-  <!-- Área de Filtros e Busca (mantida como antes) -->
+  <!-- Área de Filtros e Busca -->
   <div class="container-fluid search-bar py-3">
     <form action="painel.php" method="GET" class="form-inline flex-wrap">
       <div class="form-group mr-2 mb-2">
         <label for="status" class="mr-2">Status:</label>
         <select name="status" id="status" class="form-control">
           <option value="">Todos</option>
-          <option value="Aberto" <?php if($statusFiltro=='Aberto') echo 'selected'; ?>>Aberto</option>
+          <option value="Aberto"       <?php if($statusFiltro=='Aberto')       echo 'selected'; ?>>Aberto</option>
           <option value="Em Andamento" <?php if($statusFiltro=='Em Andamento') echo 'selected'; ?>>Em Andamento</option>
-          <option value="Resolvido" <?php if($statusFiltro=='Resolvido') echo 'selected'; ?>>Resolvido</option>
-          <option value="Cancelado" <?php if($statusFiltro=='Cancelado') echo 'selected'; ?>>Cancelado</option>
+          <option value="Resolvido"    <?php if($statusFiltro=='Resolvido')    echo 'selected'; ?>>Resolvido</option>
+          <option value="Cancelado"    <?php if($statusFiltro=='Cancelado')    echo 'selected'; ?>>Cancelado</option>
         </select>
       </div>
       <div class="form-group mr-2 mb-2">
@@ -373,9 +406,9 @@ $tickets = $stmt->fetchAll();
         <label for="urgencia" class="mr-2">Urgência:</label>
         <select name="urgencia" id="urgencia" class="form-control">
           <option value="">Todos</option>
-          <option value="Baixo" <?php if($urgenciaFiltro=='Baixo') echo 'selected'; ?>>Baixo</option>
-          <option value="Médio" <?php if($urgenciaFiltro=='Médio') echo 'selected'; ?>>Médio</option>
-          <option value="Alto" <?php if($urgenciaFiltro=='Alto') echo 'selected'; ?>>Alto</option>
+          <option value="Baixo"   <?php if($urgenciaFiltro=='Baixo')   echo 'selected'; ?>>Baixo</option>
+          <option value="Médio"   <?php if($urgenciaFiltro=='Médio')   echo 'selected'; ?>>Médio</option>
+          <option value="Alto"    <?php if($urgenciaFiltro=='Alto')    echo 'selected'; ?>>Alto</option>
           <option value="Crítico" <?php if($urgenciaFiltro=='Crítico') echo 'selected'; ?>>Crítico</option>
         </select>
       </div>
@@ -414,38 +447,35 @@ $tickets = $stmt->fetchAll();
     
   <?php if (isset($_SESSION['sucesso'])): ?>
     <div class="alert alert-success alert-dismissible fade show" role="alert">
-      <?php echo $_SESSION['sucesso']; unset($_SESSION['sucesso']); ?>
-      <button type="button" class="close" data-dismiss="alert" aria-label="Fechar">
-        <span aria-hidden="true">×</span>
-      </button>
+        <?php echo $_SESSION['sucesso']; unset($_SESSION['sucesso']); ?>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Fechar">
+            <span aria-hidden="true">×</span>
+        </button>
     </div>
   <?php endif; ?>
   <?php if (isset($_SESSION['error'])): ?>
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-      <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
-      <button type="button" class="close" data-dismiss="alert" aria-label="Fechar">
-        <span aria-hidden="true">×</span>
-      </button>
+        <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Fechar">
+            <span aria-hidden="true">×</span>
+        </button>
     </div>
   <?php endif; ?>
-    
+  
   <div class="table-responsive">
     <table class="table table-striped table-bordered table-hover">
-      <thead class="thead-dark">
-        <thead>
-  <tr style="background-color: #00bfff; color: #fff;">
-    <th>ID</th>
-    <th>Protocolo</th>
-    <th>Nome</th>
-    <th>Setor</th>
-    <th>Urgência</th>
-    <th>Status</th>
-    <th>Prévia da Descrição</th>
-    <th>Data de Criação</th>
-    <th>Ações</th>
-  </tr>
-</thead>
-
+      <thead class="thead-blue">
+        <tr>
+          <th>ID</th>
+          <th>Protocolo</th>
+          <th>Nome</th>
+          <th>Setor</th>
+          <th>Prévia da Descrição</th>
+          <th>Urgência</th>
+          <th>Status</th>
+          <th>Data de Criação</th>
+          <th>Ações</th>
+        </tr>
       </thead>
       <tbody>
         <?php foreach ($tickets as $ticket): ?>
@@ -454,23 +484,24 @@ $tickets = $stmt->fetchAll();
           <td><?php echo htmlspecialchars($ticket['protocolo']); ?></td>
           <td><?php echo htmlspecialchars($ticket['nome']); ?></td>
           <td><?php echo htmlspecialchars($ticket['setor']); ?></td>
+          <td>
+            <?php
+              $preview = substr($ticket['descricao'], 0, 50);
+              echo htmlspecialchars($preview) . (strlen($ticket['descricao']) > 50 ? '...' : '');
+            ?>
+          </td>
           <td><?php echo htmlspecialchars($ticket['urgencia']); ?></td>
           <td>
             <?php
               $status = $ticket['status'];
               switch($status) {
-                case 'Aberto':       $badge = 'badge badge-danger'; break;
-                case 'Em Andamento': $badge = 'badge badge-warning'; break;
-                case 'Resolvido':    $badge = 'badge badge-success'; break;
-                case 'Cancelado':    $badge = 'badge badge-secondary'; break;
-                default:             $badge = 'badge badge-light'; break;
+                case 'Aberto':       $badge = 'badge badge-danger';   break;
+                case 'Em Andamento': $badge = 'badge badge-warning';  break;
+                case 'Resolvido':    $badge = 'badge badge-success';  break;
+                case 'Cancelado':    $badge = 'badge badge-secondary';break;
+                default:             $badge = 'badge badge-light';    break;
               }
               echo "<span class=\"$badge\">$status</span>";
-            ?>
-          </td>
-          <td>
-            <?php 
-              echo mb_strimwidth(htmlspecialchars($ticket['descricao']), 0, 50, '...');
             ?>
           </td>
           <td><?php echo date('d/m/Y H:i:s', strtotime($ticket['data_criacao'])); ?></td>
@@ -578,10 +609,10 @@ $tickets = $stmt->fetchAll();
               <form action="atualizar_status.php" method="POST" class="form-group d-flex align-items-center">
                 <input type="hidden" name="ticket_id" value="<?php echo $ticket['id']; ?>">
                 <select name="status" id="status<?php echo $ticket['id']; ?>" class="form-control mr-2" style="width: auto;">
-                  <option value="Aberto" <?php echo ($ticket['status'] == 'Aberto') ? 'selected' : ''; ?>>Aberto</option>
+                  <option value="Aberto"       <?php echo ($ticket['status'] == 'Aberto')       ? 'selected' : ''; ?>>Aberto</option>
                   <option value="Em Andamento" <?php echo ($ticket['status'] == 'Em Andamento') ? 'selected' : ''; ?>>Em Andamento</option>
-                  <option value="Resolvido" <?php echo ($ticket['status'] == 'Resolvido') ? 'selected' : ''; ?>>Resolvido</option>
-                  <option value="Cancelado" <?php echo ($ticket['status'] == 'Cancelado') ? 'selected' : ''; ?>>Cancelado</option>
+                  <option value="Resolvido"    <?php echo ($ticket['status'] == 'Resolvido')    ? 'selected' : ''; ?>>Resolvido</option>
+                  <option value="Cancelado"    <?php echo ($ticket['status'] == 'Cancelado')    ? 'selected' : ''; ?>>Cancelado</option>
                 </select>
                 <button type="submit" class="btn btn-success btn-action">
                   <i class="fas fa-save"></i> Salvar
@@ -592,7 +623,8 @@ $tickets = $stmt->fetchAll();
 
               <!-- Excluir Chamado -->
               <h6><i class="fas fa-trash-alt"></i> Excluir Chamado</h6>
-              <form action="excluir_chamado.php" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir esse chamado?');">
+              <form action="excluir_chamado.php" method="POST" 
+                    onsubmit="return confirm('Tem certeza que deseja excluir esse chamado?');">
                 <input type="hidden" name="ticket_id" value="<?php echo $ticket['id']; ?>">
                 <button type="submit" class="btn btn-danger btn-action">
                   <i class="fas fa-trash"></i> Excluir
@@ -617,37 +649,40 @@ $tickets = $stmt->fetchAll();
                 <div class="form-row">
                   <div class="form-group col-md-6">
                     <label for="nome<?php echo $ticket['id']; ?>">Nome</label>
-                    <input type="text" class="form-control" id="nome<?php echo $ticket['id']; ?>" name="nome" value="<?php echo htmlspecialchars($ticket['nome']); ?>" required>
+                    <input type="text" class="form-control" id="nome<?php echo $ticket['id']; ?>" 
+                           name="nome" value="<?php echo htmlspecialchars($ticket['nome']); ?>" required>
                   </div>
                   <div class="form-group col-md-6">
                     <label for="setor<?php echo $ticket['id']; ?>">Setor</label>
-                    <input type="text" class="form-control" id="setor<?php echo $ticket['id']; ?>" name="setor" value="<?php echo htmlspecialchars($ticket['setor']); ?>" required>
+                    <input type="text" class="form-control" id="setor<?php echo $ticket['id']; ?>" 
+                           name="setor" value="<?php echo htmlspecialchars($ticket['setor']); ?>" required>
                   </div>
                 </div>
                 <div class="form-row">
                   <div class="form-group col-md-6">
                     <label for="urgencia<?php echo $ticket['id']; ?>">Urgência</label>
                     <select class="form-control" id="urgencia<?php echo $ticket['id']; ?>" name="urgencia" required>
-                      <option value="Baixo" <?php if($ticket['urgencia']=='Baixo') echo 'selected'; ?>>Baixo</option>
-                      <option value="Médio" <?php if($ticket['urgencia']=='Médio') echo 'selected'; ?>>Médio</option>
-                      <option value="Alto" <?php if($ticket['urgencia']=='Alto') echo 'selected'; ?>>Alto</option>
+                      <option value="Baixo"   <?php if($ticket['urgencia']=='Baixo')   echo 'selected'; ?>>Baixo</option>
+                      <option value="Médio"   <?php if($ticket['urgencia']=='Médio')   echo 'selected'; ?>>Médio</option>
+                      <option value="Alto"    <?php if($ticket['urgencia']=='Alto')    echo 'selected'; ?>>Alto</option>
                       <option value="Crítico" <?php if($ticket['urgencia']=='Crítico') echo 'selected'; ?>>Crítico</option>
                     </select>
                   </div>
                   <div class="form-group col-md-6">
                     <label for="status<?php echo $ticket['id']; ?>">Status</label>
                     <select class="form-control" id="status<?php echo $ticket['id']; ?>" name="status" required>
-                      <option value="Aberto" <?php if($ticket['status']=='Aberto') echo 'selected'; ?>>Aberto</option>
+                      <option value="Aberto"       <?php if($ticket['status']=='Aberto')       echo 'selected'; ?>>Aberto</option>
                       <option value="Em Andamento" <?php if($ticket['status']=='Em Andamento') echo 'selected'; ?>>Em Andamento</option>
-                      <option value="Resolvido" <?php if($ticket['status']=='Resolvido') echo 'selected'; ?>>Resolvido</option>
-                      <option value="Cancelado" <?php if($ticket['status']=='Cancelado') echo 'selected'; ?>>Cancelado</option>
+                      <option value="Resolvido"    <?php if($ticket['status']=='Resolvido')    echo 'selected'; ?>>Resolvido</option>
+                      <option value="Cancelado"    <?php if($ticket['status']=='Cancelado')    echo 'selected'; ?>>Cancelado</option>
                     </select>
                   </div>
                 </div>
                 <div class="form-row">
                   <div class="form-group col-12">
                     <label for="descricao<?php echo $ticket['id']; ?>">Descrição</label>
-                    <textarea class="form-control" id="descricao<?php echo $ticket['id']; ?>" name="descricao" rows="3" required><?php echo htmlspecialchars($ticket['descricao']); ?></textarea>
+                    <textarea class="form-control" id="descricao<?php echo $ticket['id']; ?>" 
+                              name="descricao" rows="3" required><?php echo htmlspecialchars($ticket['descricao']); ?></textarea>
                   </div>
                 </div>
                 <button type="submit" class="btn btn-primary btn-action">
@@ -661,6 +696,29 @@ $tickets = $stmt->fetchAll();
       </tbody>
     </table>
   </div>
+
+  <!-- Paginação -->
+  <?php if ($totalPages > 1): ?>
+  <nav aria-label="Navegação de página">
+    <ul class="pagination">
+      <?php
+        // Mantém os filtros na query string
+        $queryString = http_build_query(array_merge($_GET, ['page' => null]));
+      ?>
+      <?php if ($page > 1): ?>
+        <li class="page-item"><a class="page-link" href="painel.php?<?php echo $queryString . '&page=' . ($page - 1); ?>">Anterior</a></li>
+      <?php endif; ?>
+
+      <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+        <li class="page-item"><a class="page-link <?php echo ($i == $page) ? 'active' : ''; ?>" href="painel.php?<?php echo $queryString . '&page=' . $i; ?>"><?php echo $i; ?></a></li>
+      <?php endfor; ?>
+
+      <?php if ($page < $totalPages): ?>
+        <li class="page-item"><a class="page-link" href="painel.php?<?php echo $queryString . '&page=' . ($page + 1); ?>">Próximo</a></li>
+      <?php endif; ?>
+    </ul>
+  </nav>
+  <?php endif; ?>
   
   <!-- jQuery e Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -669,7 +727,7 @@ $tickets = $stmt->fetchAll();
   <script>
     $(document).ready(function() {
       $('.details-section').hide();
-      
+
       $('.toggle-details').click(function(e) {
         e.preventDefault();
         var targetId = $(this).data('target');
